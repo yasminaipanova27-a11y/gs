@@ -1,1038 +1,1245 @@
-/* =========================================
-   GLOBALSTUDENT HUB — JAVASCRIPT
-   ========================================= */
+/* =========================================================
+   GLOBALSTUDENT HUB
+   MVP FRONT-END LOGIC
+   ========================================================= */
 
-/* ---------- BASIC DATA ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  initializeNavigation();
+  initializeHousing();
+  initializeRoommates();
+  initializeCommunity();
+  initializeEvents();
+  initializeMessaging();
+  initializeProfile();
+  initializeQuickQuestions();
+  initializeSavedItems();
+  openInitialPage();
+});
 
-const state = {
-    currentPage: "home",
-    savedHousing: [],
-    likedRoommates: [],
-    passedRoommates: [],
-    messages: [],
-    profileProgress: 75
-};
 
+/* =========================================================
+   1. NAVIGATION
+   ========================================================= */
 
-/* =========================================
-   PAGE NAVIGATION
-   ========================================= */
+function initializeNavigation() {
+  const navigationButtons = document.querySelectorAll("[data-page]");
+
+  navigationButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const pageName = button.dataset.page;
+
+      if (pageName) {
+        showPage(pageName);
+      }
+    });
+  });
+}
+
 
 function showPage(pageName) {
+  const pages = document.querySelectorAll(".page");
 
-    const pages = document.querySelectorAll(".page");
+  pages.forEach((page) => {
+    page.classList.remove("active");
+  });
 
-    pages.forEach(page => {
-        page.classList.remove("active");
-    });
+  const selectedPage = document.getElementById(`page-${pageName}`);
 
-    const selectedPage = document.getElementById(pageName);
+  if (!selectedPage) {
+    console.warn(`Page "${pageName}" was not found.`);
+    return;
+  }
 
-    if (selectedPage) {
-        selectedPage.classList.add("active");
-    }
+  selectedPage.classList.add("active");
 
-    state.currentPage = pageName;
+  updateActiveNavigation(pageName);
 
-    /* Desktop navigation */
+  window.location.hash = pageName;
 
-    document.querySelectorAll(".nav-item").forEach(item => {
-        item.classList.remove("active");
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
 
-        if (item.dataset.page === pageName) {
-            item.classList.add("active");
-        }
-    });
 
-    /* Mobile navigation */
+function updateActiveNavigation(pageName) {
+  const navButtons = document.querySelectorAll(
+    ".nav-link, .mobile-nav button"
+  );
 
-    document.querySelectorAll(".mobile-nav-item").forEach(item => {
-        item.classList.remove("active");
+  navButtons.forEach((button) => {
+    button.classList.remove("active");
+  });
 
-        if (item.dataset.page === pageName) {
-            item.classList.add("active");
-        }
-    });
-
-    /* Change topbar title */
-
-    const titles = {
-        home: "Home",
-        housing: "Find Housing",
-        roommates: "Find Roommates",
-        community: "Community",
-        events: "Events",
-        guides: "Astana Guides",
-        messages: "Messages",
-        profile: "My Profile",
-        saved: "Saved"
-    };
-
-    const titleElement = document.querySelector(".topbar-title");
-
-    if (titleElement) {
-        titleElement.textContent = titles[pageName] || "GlobalStudent Hub";
-    }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+  document
+    .querySelectorAll(`[data-page="${pageName}"]`)
+    .forEach((button) => {
+      button.classList.add("active");
     });
 }
 
 
-/* =========================================
-   NAVIGATION CLICK EVENTS
-   ========================================= */
+function openInitialPage() {
+  const hash = window.location.hash.replace("#", "");
 
-document.addEventListener("click", function(event) {
+  if (hash && document.getElementById(`page-${hash}`)) {
+    showPage(hash);
+  } else {
+    showPage("home");
+  }
+}
 
-    const navItem = event.target.closest("[data-page]");
 
-    if (navItem) {
+window.addEventListener("hashchange", () => {
+  const pageName = window.location.hash.replace("#", "");
 
-        const page = navItem.dataset.page;
-
-        if (page) {
-            showPage(page);
-        }
-    }
-
+  if (pageName && document.getElementById(`page-${pageName}`)) {
+    showPage(pageName);
+  }
 });
 
 
-/* =========================================
-   HERO BUTTONS
-   ========================================= */
+/* =========================================================
+   2. LOCAL STORAGE HELPERS
+   ========================================================= */
 
-document.addEventListener("click", function(event) {
-
-    const button = event.target.closest("[data-action]");
-
-    if (!button) return;
-
-    const action = button.dataset.action;
-
-    if (action === "housing") {
-        showPage("housing");
-    }
-
-    if (action === "roommates") {
-        showPage("roommates");
-    }
-
-    if (action === "community") {
-        showPage("community");
-    }
-
-    if (action === "events") {
-        showPage("events");
-    }
-
-    if (action === "profile") {
-        showPage("profile");
-    }
-
-});
+function saveData(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
 
-/* =========================================
-   TOAST NOTIFICATION
-   ========================================= */
+function getData(key, fallback = null) {
+  try {
+    const data = localStorage.getItem(key);
 
-function showToast(message) {
+    return data ? JSON.parse(data) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
 
-    const existingToast = document.querySelector(".toast");
 
-    if (existingToast) {
-        existingToast.remove();
-    }
+/* =========================================================
+   3. NOTIFICATIONS
+   ========================================================= */
 
-    const toast = document.createElement("div");
+function showNotification(message, type = "success") {
+  const oldNotification =
+    document.querySelector(".globalstudent-notification");
 
-    toast.className = "toast";
+  if (oldNotification) {
+    oldNotification.remove();
+  }
 
-    toast.textContent = message;
+  const notification = document.createElement("div");
 
-    document.body.appendChild(toast);
+  notification.className =
+    "globalstudent-notification";
+
+  notification.textContent = message;
+
+  notification.style.position = "fixed";
+  notification.style.top = "90px";
+  notification.style.right = "25px";
+  notification.style.zIndex = "9999";
+  notification.style.padding = "14px 18px";
+  notification.style.borderRadius = "14px";
+  notification.style.fontWeight = "700";
+  notification.style.fontSize = "14px";
+  notification.style.boxShadow =
+    "0 10px 30px rgba(0,0,0,.15)";
+  notification.style.transition = "all .3s ease";
+
+  if (type === "error") {
+    notification.style.background = "#fff1f1";
+    notification.style.color = "#c33b3b";
+  } else {
+    notification.style.background = "#ffffff";
+    notification.style.color = "#5b5ce2";
+  }
+
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.opacity = "0";
+    notification.style.transform =
+      "translateY(-10px)";
 
     setTimeout(() => {
-
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(10px)";
-
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-
-    }, 2500);
+      notification.remove();
+    }, 300);
+  }, 2500);
 }
 
 
-/* =========================================
-   SAVE HOUSING
-   ========================================= */
+/* =========================================================
+   4. HOUSING
+   ========================================================= */
 
-document.addEventListener("click", function(event) {
+function initializeHousing() {
+  const housingPage =
+    document.getElementById("page-housing");
 
-    const favoriteButton = event.target.closest(".favorite-button");
+  if (!housingPage) return;
 
-    if (!favoriteButton) return;
+  const searchInput =
+    housingPage.querySelector('input[type="text"]');
 
-    const housingCard = favoriteButton.closest(".housing-card");
+  const selects =
+    housingPage.querySelectorAll("select");
 
-    if (!housingCard) return;
+  const searchButton =
+    [...housingPage.querySelectorAll("button")]
+      .find(
+        (button) =>
+          button.textContent.trim().toLowerCase() ===
+          "search"
+      );
 
-    const titleElement = housingCard.querySelector(".housing-title");
+  if (searchButton) {
+    searchButton.addEventListener("click", () => {
+      filterHousing();
+    });
+  }
 
-    if (!titleElement) return;
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      filterHousing();
+    });
+  }
 
-    const title = titleElement.textContent.trim();
+  selects.forEach((select) => {
+    select.addEventListener("change", () => {
+      filterHousing();
+    });
+  });
 
-    const index = state.savedHousing.indexOf(title);
+  const housingCards =
+    housingPage.querySelectorAll(".card");
 
-    if (index === -1) {
+  housingCards.forEach((card, index) => {
+    setupHousingCard(card, index);
+  });
+}
 
-        state.savedHousing.push(title);
 
-        favoriteButton.textContent = "♥";
+function filterHousing() {
+  const housingPage =
+    document.getElementById("page-housing");
 
-        showToast("Apartment saved ❤️");
+  if (!housingPage) return;
 
-    } else {
+  const searchInput =
+    housingPage.querySelector('input[type="text"]');
 
-        state.savedHousing.splice(index, 1);
+  const query =
+    searchInput?.value
+      .trim()
+      .toLowerCase() || "";
 
-        favoriteButton.textContent = "♡";
+  const cards =
+    housingPage.querySelectorAll(".card");
 
-        showToast("Apartment removed from saved");
+  cards.forEach((card) => {
+    const text =
+      card.textContent.toLowerCase();
 
+    const matchesSearch =
+      !query || text.includes(query);
+
+    card.style.display =
+      matchesSearch ? "" : "none";
+  });
+}
+
+
+function setupHousingCard(card, index) {
+  const heart =
+    [...card.querySelectorAll("span")]
+      .find((span) =>
+        span.textContent.includes("♡")
+      );
+
+  if (heart) {
+    heart.style.cursor = "pointer";
+
+    heart.addEventListener("click", () => {
+      toggleSavedHousing(card, heart, index);
+    });
+  }
+
+  const viewButton =
+    [...card.querySelectorAll("button")]
+      .find((button) =>
+        button.textContent
+          .toLowerCase()
+          .includes("view apartment")
+      );
+
+  if (viewButton) {
+    viewButton.addEventListener("click", () => {
+      openApartmentModal(card);
+    });
+  }
+}
+
+
+function toggleSavedHousing(card, heart, index) {
+  let savedHousing =
+    getData("globalstudent_saved_housing", []);
+
+  const title =
+    card.querySelector("h3")?.textContent ||
+    `Apartment ${index + 1}`;
+
+  const alreadySaved =
+    savedHousing.includes(title);
+
+  if (alreadySaved) {
+    savedHousing =
+      savedHousing.filter(
+        (item) => item !== title
+      );
+
+    heart.textContent = "♡";
+
+    showNotification(
+      `${title} removed from saved listings.`
+    );
+  } else {
+    savedHousing.push(title);
+
+    heart.textContent = "♥";
+
+    showNotification(
+      `${title} saved!`
+    );
+  }
+
+  saveData(
+    "globalstudent_saved_housing",
+    savedHousing
+  );
+}
+
+
+function initializeSavedItems() {
+  const savedHousing =
+    getData("globalstudent_saved_housing", []);
+
+  const housingPage =
+    document.getElementById("page-housing");
+
+  if (!housingPage) return;
+
+  housingPage
+    .querySelectorAll(".card")
+    .forEach((card) => {
+      const title =
+        card.querySelector("h3")?.textContent;
+
+      const heart =
+        [...card.querySelectorAll("span")]
+          .find((span) =>
+            ["♡", "♥"].includes(
+              span.textContent.trim()
+            )
+          );
+
+      if (
+        title &&
+        heart &&
+        savedHousing.includes(title)
+      ) {
+        heart.textContent = "♥";
+      }
+    });
+}
+
+
+function openApartmentModal(card) {
+  const existing =
+    document.getElementById(
+      "apartment-modal"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const title =
+    card.querySelector("h3")?.textContent ||
+    "Student Apartment";
+
+  const price =
+    card.querySelector(".price")?.textContent ||
+    "";
+
+  const paragraphs =
+    [...card.querySelectorAll("p")]
+      .map((p) => p.textContent.trim());
+
+  const modal =
+    document.createElement("div");
+
+  modal.id = "apartment-modal";
+
+  modal.innerHTML = `
+    <div class="apartment-modal-content">
+
+      <button
+        id="closeApartmentModal"
+        class="apartment-modal-close"
+      >
+        ×
+      </button>
+
+      <h2>${title}</h2>
+
+      <p>${paragraphs[0] || ""}</p>
+
+      <h3 style="margin:15px 0">
+        ${price}
+      </h3>
+
+      <div style="
+        background:#f7f8fc;
+        padding:18px;
+        border-radius:16px;
+        margin:18px 0;
+      ">
+
+        <strong>
+          🛡 Safety & Verification
+        </strong>
+
+        <p style="margin-top:8px">
+          ✓ Property information checked
+        </p>
+
+        <p>
+          ✓ Landlord identity verified
+        </p>
+
+        <p>
+          ✓ Student-friendly listing
+        </p>
+
+      </div>
+
+      <h3>
+        Potential Roommates for This Apartment
+      </h3>
+
+      <div style="
+        margin-top:14px;
+        line-height:2;
+      ">
+        <div>👩 Amina — <strong>94% compatible</strong></div>
+        <div>👨 Daniel — <strong>89% compatible</strong></div>
+        <div>👩 Sara — <strong>84% compatible</strong></div>
+      </div>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:20px;
+        flex-wrap:wrap;
+      ">
+
+        <button
+          id="apartmentRoommates"
+          class="btn btn-primary"
+        >
+          View Roommates
+        </button>
+
+        <button
+          id="saveApartmentModal"
+          class="btn btn-outline"
+        >
+          Save Apartment
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  modal.style.position = "fixed";
+  modal.style.inset = "0";
+  modal.style.background =
+    "rgba(20,20,35,.55)";
+  modal.style.zIndex = "9998";
+  modal.style.display = "grid";
+  modal.style.placeItems = "center";
+  modal.style.padding = "20px";
+
+  const content =
+    modal.querySelector(
+      ".apartment-modal-content"
+    );
+
+  content.style.background = "white";
+  content.style.width =
+    "min(600px, 100%)";
+  content.style.maxHeight = "90vh";
+  content.style.overflowY = "auto";
+  content.style.borderRadius = "25px";
+  content.style.padding = "28px";
+  content.style.position = "relative";
+
+  const close =
+    modal.querySelector(
+      ".apartment-modal-close"
+    );
+
+  close.style.position = "absolute";
+  close.style.right = "18px";
+  close.style.top = "14px";
+  close.style.border = "0";
+  close.style.background = "transparent";
+  close.style.fontSize = "30px";
+  close.style.cursor = "pointer";
+
+  document.body.appendChild(modal);
+
+  document
+    .getElementById("closeApartmentModal")
+    .addEventListener("click", () => {
+      modal.remove();
+    });
+
+  document
+    .getElementById("apartmentRoommates")
+    .addEventListener("click", () => {
+      modal.remove();
+      showPage("roommates");
+    });
+
+  document
+    .getElementById("saveApartmentModal")
+    .addEventListener("click", () => {
+      showNotification(
+        `${title} saved to your housing list.`
+      );
+    });
+
+  modal.addEventListener(
+    "click",
+    (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
     }
-
-});
-
-
-/* =========================================
-   ROOMMATE LIKE / PASS
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const button = event.target.closest("[data-roommate-action]");
-
-    if (!button) return;
-
-    const card = button.closest(".roommate-card");
-
-    if (!card) return;
-
-    const nameElement = card.querySelector(".roommate-name");
-
-    if (!nameElement) return;
-
-    const name = nameElement.textContent.trim();
-
-    const action = button.dataset.roommateAction;
-
-    if (action === "like") {
-
-        if (!state.likedRoommates.includes(name)) {
-            state.likedRoommates.push(name);
-        }
-
-        button.textContent = "Liked ✓";
-
-        button.classList.add("btn-secondary");
-
-        showToast(`${name} was added to your matches`);
-
-    }
-
-    if (action === "pass") {
-
-        if (!state.passedRoommates.includes(name)) {
-            state.passedRoommates.push(name);
-        }
-
-        card.style.opacity = "0.45";
-
-        showToast("Profile passed");
-
-    }
-
-});
+  );
+}
 
 
-/* =========================================
-   MESSAGE BUTTON
-   ========================================= */
+/* =========================================================
+   5. ROOMMATE MATCHING
+   ========================================================= */
 
-document.addEventListener("click", function(event) {
+function initializeRoommates() {
+  const page =
+    document.getElementById(
+      "page-roommates"
+    );
 
-    const button = event.target.closest("[data-message]");
+  if (!page) return;
 
-    if (!button) return;
+  const cards =
+    page.querySelectorAll(
+      ".roommate-card"
+    );
 
-    const name = button.dataset.message;
+  cards.forEach((card) => {
+    const buttons =
+      card.querySelectorAll("button");
 
-    showPage("messages");
+    buttons.forEach((button) => {
+      const text =
+        button.textContent
+          .trim()
+          .toLowerCase();
 
-    showToast(`You can now message ${name}`);
+      if (text.includes("like")) {
+        button.addEventListener(
+          "click",
+          () =>
+            likeRoommate(card, button)
+        );
+      }
 
-});
+      if (text.includes("pass")) {
+        button.addEventListener(
+          "click",
+          () => passRoommate(card)
+        );
+      }
+
+      if (
+        text.includes("view profile")
+      ) {
+        button.addEventListener(
+          "click",
+          () =>
+            openRoommateProfile(card)
+        );
+      }
+    });
+  });
+
+  const filters =
+    page.querySelectorAll("select");
+
+  filters.forEach((filter) => {
+    filter.addEventListener(
+      "change",
+      filterRoommates
+    );
+  });
+}
 
 
-/* =========================================
-   SEARCH HOUSING
-   ========================================= */
+function likeRoommate(card, button) {
+  const name =
+    card.querySelector("h3")
+      ?.textContent || "Student";
 
-const housingSearch = document.querySelector("#housingSearch");
+  const liked =
+    button.dataset.liked === "true";
 
-if (housingSearch) {
+  if (liked) {
+    button.dataset.liked = "false";
+    button.textContent = "♡ Like";
 
-    housingSearch.addEventListener("input", function() {
+    showNotification(
+      `${name} removed from your matches.`
+    );
+  } else {
+    button.dataset.liked = "true";
+    button.textContent = "♥ Liked";
 
-        const searchValue = this.value.toLowerCase().trim();
+    showNotification(
+      `${name} added to your matches!`
+    );
+  }
+}
 
-        const cards = document.querySelectorAll(
-            "#housing .housing-card"
+
+function passRoommate(card) {
+  card.style.transition =
+    "all .3s ease";
+
+  card.style.opacity = "0";
+  card.style.transform =
+    "translateX(-30px)";
+
+  setTimeout(() => {
+    card.style.display = "none";
+  }, 300);
+}
+
+
+function filterRoommates() {
+  const page =
+    document.getElementById(
+      "page-roommates"
+    );
+
+  if (!page) return;
+
+  const selects =
+    [...page.querySelectorAll("select")];
+
+  const selectedValues =
+    selects
+      .map((select) =>
+        select.value
+          .trim()
+          .toLowerCase()
+      )
+      .filter(
+        (value) =>
+          !value.includes("all ") &&
+          !value.includes("any ") &&
+          value !== "sleep schedule" &&
+          value !==
+            "smoking preference"
+      );
+
+  const cards =
+    page.querySelectorAll(
+      ".roommate-card"
+    );
+
+  cards.forEach((card) => {
+    const text =
+      card.textContent.toLowerCase();
+
+    const matches =
+      selectedValues.every(
+        (value) =>
+          text.includes(value) ||
+          value === ""
+      );
+
+    card.style.display =
+      matches ? "" : "none";
+  });
+}
+
+
+function openRoommateProfile(card) {
+  const name =
+    card.querySelector("h3")
+      ?.textContent || "Student";
+
+  const score =
+    card.querySelector(
+      ".compatibility"
+    )?.textContent || "";
+
+  const description =
+    [...card.querySelectorAll("p")]
+      .map((p) => p.textContent)
+      .join(" · ");
+
+  const matchItems =
+    [...card.querySelectorAll(
+      ".match-list div"
+    )]
+      .map(
+        (item) =>
+          `<p>${item.textContent}</p>`
+      )
+      .join("");
+
+  const modal =
+    document.createElement("div");
+
+  modal.style.position = "fixed";
+  modal.style.inset = "0";
+  modal.style.background =
+    "rgba(20,20,35,.55)";
+  modal.style.zIndex = "9999";
+  modal.style.display = "grid";
+  modal.style.placeItems = "center";
+  modal.style.padding = "20px";
+
+  modal.innerHTML = `
+    <div style="
+      background:white;
+      padding:30px;
+      width:min(500px,100%);
+      border-radius:24px;
+      position:relative;
+    ">
+
+      <button
+        class="close-roommate"
+        style="
+          position:absolute;
+          top:15px;
+          right:18px;
+          border:0;
+          background:none;
+          font-size:28px;
+          cursor:pointer;
+        "
+      >
+        ×
+      </button>
+
+      <div style="
+        font-size:14px;
+        color:#737789;
+      ">
+        Roommate Match
+      </div>
+
+      <h2 style="margin-top:5px">
+        ${name}
+      </h2>
+
+      <div style="
+        font-size:28px;
+        font-weight:900;
+        color:#16a56b;
+        margin:10px 0;
+      ">
+        ${score} Compatible
+      </div>
+
+      <p>${description}</p>
+
+      <div style="
+        margin:20px 0;
+        line-height:1.8;
+      ">
+        ${matchItems}
+      </div>
+
+      <button
+        class="btn btn-primary roommate-message"
+      >
+        Message ${name}
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  modal
+    .querySelector(
+      ".close-roommate"
+    )
+    .addEventListener(
+      "click",
+      () => modal.remove()
+    );
+
+  modal
+    .querySelector(
+      ".roommate-message"
+    )
+    .addEventListener(
+      "click",
+      () => {
+        modal.remove();
+        showPage("messages");
+      }
+    );
+}
+
+
+/* =========================================================
+   6. COMMUNITY
+   ========================================================= */
+
+function initializeCommunity() {
+  const page =
+    document.getElementById(
+      "page-community"
+    );
+
+  if (!page) return;
+
+  const createPostButton =
+    [...page.querySelectorAll("button")]
+      .find((button) =>
+        button.textContent
+          .toLowerCase()
+          .includes("create post")
+      );
+
+  if (createPostButton) {
+    createPostButton.addEventListener(
+      "click",
+      openCreatePost
+    );
+  }
+
+  setupCommunityLikes();
+
+  const categories =
+    page.querySelectorAll(".badge");
+
+  categories.forEach((category) => {
+    category.style.cursor = "pointer";
+
+    category.addEventListener(
+      "click",
+      () => {
+        categories.forEach(
+          (item) =>
+            item.classList.remove(
+              "badge-blue"
+            )
         );
 
-        cards.forEach(card => {
+        category.classList.add(
+          "badge-blue"
+        );
 
-            const text = card.textContent.toLowerCase();
-
-            if (text.includes(searchValue)) {
-
-                card.style.display = "";
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-    });
-
+        showNotification(
+          `Showing: ${category.textContent.trim()}`
+        );
+      }
+    );
+  });
 }
 
 
-/* =========================================
-   GENERIC SEARCH
-   ========================================= */
+function setupCommunityLikes() {
+  document
+    .querySelectorAll(
+      "#page-community .post"
+    )
+    .forEach((post) => {
+      const like =
+        [...post.querySelectorAll(
+          ".post-meta span"
+        )]
+          .find((span) =>
+            span.textContent
+              .trim()
+              .startsWith("♡")
+          );
 
-document.addEventListener("input", function(event) {
+      if (!like) return;
 
-    if (!event.target.matches("[data-search]")) return;
+      like.style.cursor = "pointer";
 
-    const searchValue = event.target.value.toLowerCase().trim();
+      like.addEventListener(
+        "click",
+        () => {
+          const number =
+            parseInt(
+              like.textContent.match(
+                /\d+/
+              )?.[0] || "0"
+            );
 
-    const targetSelector = event.target.dataset.search;
+          const liked =
+            like.dataset.liked ===
+            "true";
 
-    const items = document.querySelectorAll(targetSelector);
+          if (liked) {
+            like.dataset.liked =
+              "false";
 
-    items.forEach(item => {
+            like.textContent =
+              `♡ ${Math.max(
+                0,
+                number - 1
+              )}`;
+          } else {
+            like.dataset.liked =
+              "true";
 
-        const text = item.textContent.toLowerCase();
-
-        item.style.display =
-            text.includes(searchValue) ? "" : "none";
-
-    });
-
-});
-
-
-/* =========================================
-   FILTERS
-   ========================================= */
-
-document.addEventListener("change", function(event) {
-
-    const filter = event.target.closest("[data-filter]");
-
-    if (!filter) return;
-
-    const filterType = filter.dataset.filter;
-
-    const value = filter.value.toLowerCase();
-
-    const cards = document.querySelectorAll(
-        `[data-filter-item="${filterType}"]`
-    );
-
-    cards.forEach(card => {
-
-        const cardValue =
-            card.dataset.filterValue?.toLowerCase() || "";
-
-        if (!value || value === "all") {
-
-            card.style.display = "";
-
-        } else if (cardValue.includes(value)) {
-
-            card.style.display = "";
-
-        } else {
-
-            card.style.display = "none";
-
+            like.textContent =
+              `♥ ${number + 1}`;
+          }
         }
-
+      );
     });
-
-});
-
-
-/* =========================================
-   VERIFIED ONLY FILTER
-   ========================================= */
-
-document.addEventListener("change", function(event) {
-
-    if (!event.target.matches("#verifiedOnly")) return;
-
-    const checked = event.target.checked;
-
-    const cards = document.querySelectorAll(
-        "#housing .housing-card"
-    );
-
-    cards.forEach(card => {
-
-        const verified =
-            card.querySelector(".verified");
-
-        if (!checked) {
-
-            card.style.display = "";
-
-            return;
-        }
-
-        card.style.display =
-            verified ? "" : "none";
-
-    });
-
-});
-
-
-/* =========================================
-   EVENT JOIN BUTTON
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const button = event.target.closest("[data-event-join]");
-
-    if (!button) return;
-
-    const eventName =
-        button.dataset.eventJoin;
-
-    if (button.classList.contains("joined")) {
-
-        button.classList.remove("joined");
-
-        button.textContent = "Join";
-
-        showToast("You left the event");
-
-    } else {
-
-        button.classList.add("joined");
-
-        button.textContent = "Joined ✓";
-
-        showToast(`You're going to ${eventName} 🎉`);
-
-    }
-
-});
-
-
-/* =========================================
-   COMMUNITY LIKE
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const button = event.target.closest("[data-like-post]");
-
-    if (!button) return;
-
-    const countElement =
-        button.querySelector(".like-count");
-
-    if (!countElement) return;
-
-    let count =
-        parseInt(countElement.textContent) || 0;
-
-    if (button.classList.contains("liked")) {
-
-        count--;
-
-        button.classList.remove("liked");
-
-    } else {
-
-        count++;
-
-        button.classList.add("liked");
-
-    }
-
-    countElement.textContent = count;
-
-});
-
-
-/* =========================================
-   PROFILE PROGRESS
-   ========================================= */
-
-function updateProfileProgress() {
-
-    const progressBars =
-        document.querySelectorAll(".progress-fill");
-
-    progressBars.forEach(bar => {
-
-        bar.style.width =
-            `${state.profileProgress}%`;
-
-    });
-
-    const progressNumbers =
-        document.querySelectorAll("[data-progress-number]");
-
-    progressNumbers.forEach(number => {
-
-        number.textContent =
-            `${state.profileProgress}%`;
-
-    });
-
 }
 
 
-/* =========================================
-   PROFILE COMPLETION
-   ========================================= */
+function openCreatePost() {
+  const text =
+    prompt(
+      "What would you like to share with the GlobalStudent community?"
+    );
 
-document.addEventListener("click", function(event) {
+  if (!text || !text.trim()) {
+    return;
+  }
 
-    const button =
-        event.target.closest("[data-complete-profile]");
+  const communityGrid =
+    document.querySelector(
+      "#page-community .grid-2"
+    );
 
-    if (!button) return;
+  if (!communityGrid) return;
 
-    state.profileProgress = 100;
+  const post =
+    document.createElement(
+      "article"
+    );
 
-    updateProfileProgress();
+  post.className = "card post";
 
-    button.textContent = "Profile completed ✓";
+  post.innerHTML = `
+    <div class="post-author">
 
-    button.disabled = true;
+      <div
+        class="small-avatar"
+        style="
+          display:grid;
+          place-items:center;
+          background:#5b5ce2;
+          color:white;
+          font-weight:800;
+        "
+      >
+        Y
+      </div>
 
-    showToast("Your profile is complete 🎉");
+      <div>
+        <strong>Yasmin Aipanova</strong>
+        <p>Just now</p>
+      </div>
 
-});
+    </div>
 
+    <p class="post-text">
+      ${escapeHTML(text)}
+    </p>
 
-/* =========================================
-   QUICK ACTIONS
-   ========================================= */
+    <div class="post-meta">
+      <span style="cursor:pointer">
+        ♡ 0
+      </span>
 
-document.addEventListener("click", function(event) {
+      <span>
+        💬 0 comments
+      </span>
+    </div>
+  `;
 
-    const button =
-        event.target.closest(".quick-action");
+  communityGrid.prepend(post);
 
-    if (!button) return;
+  setupCommunityLikes();
 
-    const page =
-        button.dataset.page;
+  showNotification(
+    "Your post was published!"
+  );
+}
 
-    if (page) {
-        showPage(page);
-    }
-
-});
-
-
-/* =========================================
-   CREATE COMMUNITY POST
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const button =
-        event.target.closest("#createPostButton");
-
-    if (!button) return;
-
-    const input =
-        document.querySelector("#postInput");
-
-    if (!input) return;
-
-    const text =
-        input.value.trim();
-
-    if (!text) {
-
-        showToast("Write something first");
-
-        return;
-    }
-
-    const feed =
-        document.querySelector("#communityFeed");
-
-    if (!feed) return;
-
-    const post =
-        document.createElement("div");
-
-    post.className = "card post-card";
-
-    post.innerHTML = `
-        <div class="post-header">
-            <img
-                class="post-avatar"
-                src="https://i.pravatar.cc/100?img=47"
-                alt="Yasmin"
-            >
-
-            <div>
-                <div class="post-author">
-                    Yasmin Aipanova
-                </div>
-
-                <div class="post-time">
-                    Just now
-                </div>
-            </div>
-        </div>
-
-        <div class="post-content">
-            ${escapeHTML(text)}
-        </div>
-
-        <div class="post-actions">
-
-            <span
-                class="post-action"
-                data-like-post
-            >
-                ♡
-                <span class="like-count">0</span>
-            </span>
-
-            <span class="post-action">
-                💬 Comment
-            </span>
-
-            <span class="post-action">
-                ↗ Share
-            </span>
-
-        </div>
-    `;
-
-    feed.prepend(post);
-
-    input.value = "";
-
-    showToast("Post published ✓");
-
-});
-
-
-/* =========================================
-   ESCAPE HTML
-   ========================================= */
 
 function escapeHTML(text) {
+  const div =
+    document.createElement("div");
 
-    const div =
-        document.createElement("div");
+  div.textContent = text;
 
-    div.textContent = text;
-
-    return div.innerHTML;
-
+  return div.innerHTML;
 }
 
 
-/* =========================================
-   CHAT
-   ========================================= */
+/* =========================================================
+   7. EVENTS
+   ========================================================= */
 
-document.addEventListener("click", function(event) {
+function initializeEvents() {
+  const eventCards =
+    document.querySelectorAll(
+      "#page-events .event-card"
+    );
 
-    const conversation =
-        event.target.closest(".conversation");
+  eventCards.forEach((card) => {
+    const eventName =
+      card.querySelector("h3")
+        ?.textContent ||
+      "Student Event";
 
-    if (!conversation) return;
+    const buttons =
+      card.querySelectorAll("button");
 
-    document.querySelectorAll(".conversation")
-        .forEach(item => {
-            item.classList.remove("active");
-        });
+    buttons.forEach((button) => {
+      const text =
+        button.textContent
+          .trim()
+          .toLowerCase();
 
-    conversation.classList.add("active");
+      if (
+        text.includes("join event")
+      ) {
+        button.addEventListener(
+          "click",
+          () => {
+            const joined =
+              button.dataset.joined ===
+              "true";
 
-    const name =
-        conversation.querySelector(
-            ".conversation-name"
+            if (joined) {
+              button.dataset.joined =
+                "false";
+
+              button.textContent =
+                "Join Event";
+
+              showNotification(
+                `You left ${eventName}.`
+              );
+            } else {
+              button.dataset.joined =
+                "true";
+
+              button.textContent =
+                "✓ Joined";
+
+              showNotification(
+                `You're going to ${eventName}!`
+              );
+            }
+          }
         );
+      }
 
-    const chatName =
-        document.querySelector("#chatName");
+      if (text === "save") {
+        button.addEventListener(
+          "click",
+          () => {
+            const saved =
+              button.dataset.saved ===
+              "true";
 
-    if (name && chatName) {
-        chatName.textContent =
-            name.textContent;
-    }
+            if (saved) {
+              button.dataset.saved =
+                "false";
 
-});
+              button.textContent =
+                "Save";
+            } else {
+              button.dataset.saved =
+                "true";
+
+              button.textContent =
+                "✓ Saved";
+
+              showNotification(
+                `${eventName} saved.`
+              );
+            }
+          }
+        );
+      }
+    });
+  });
+}
 
 
-/* =========================================
-   SEND MESSAGE
-   ========================================= */
+/* =========================================================
+   8. MESSAGING
+   ========================================================= */
 
-document.addEventListener("click", function(event) {
+function initializeMessaging() {
+  const input =
+    document.getElementById(
+      "messageInput"
+    );
 
-    const button =
-        event.target.closest("#sendMessage");
+  if (!input) return;
 
-    if (!button) return;
-
-    sendMessage();
-
-});
-
-
-document.addEventListener("keydown", function(event) {
-
-    if (
-        event.target.matches("#messageInput") &&
-        event.key === "Enter"
-    ) {
-
+  input.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Enter") {
         event.preventDefault();
-
         sendMessage();
-
+      }
     }
+  );
 
-});
+  const conversations =
+    document.querySelectorAll(
+      ".conversation"
+    );
+
+  conversations.forEach(
+    (conversation) => {
+      conversation.addEventListener(
+        "click",
+        () => {
+          conversations.forEach(
+            (item) =>
+              item.classList.remove(
+                "active"
+              )
+          );
+
+          conversation.classList.add(
+            "active"
+          );
+
+          const name =
+            conversation.querySelector(
+              "strong"
+            )?.textContent;
+
+          const chatHeader =
+            document.querySelector(
+              ".chat-header"
+            );
+
+          if (
+            name &&
+            chatHeader
+          ) {
+            chatHeader.textContent =
+              name;
+          }
+        }
+      );
+    }
+  );
+}
 
 
 function sendMessage() {
-
-    const input =
-        document.querySelector("#messageInput");
-
-    const messages =
-        document.querySelector("#chatMessages");
-
-    if (!input || !messages) return;
-
-    const text =
-        input.value.trim();
-
-    if (!text) return;
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message sent";
-
-    message.textContent =
-        text;
-
-    messages.appendChild(message);
-
-    input.value = "";
-
-    messages.scrollTop =
-        messages.scrollHeight;
-
-    state.messages.push(text);
-
-    setTimeout(() => {
-
-        const reply =
-            document.createElement("div");
-
-        reply.className =
-            "message received";
-
-        reply.textContent =
-            "Thanks! I'll get back to you soon 😊";
-
-        messages.appendChild(reply);
-
-        messages.scrollTop =
-            messages.scrollHeight;
-
-    }, 900);
-
-}
-
-
-/* =========================================
-   GUIDE CARD
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const guide =
-        event.target.closest("[data-guide]");
-
-    if (!guide) return;
-
-    const guideName =
-        guide.dataset.guide;
-
-    showToast(`Opening ${guideName} guide`);
-
-});
-
-
-/* =========================================
-   SAVED PAGE
-   ========================================= */
-
-function renderSavedHousing() {
-
-    const container =
-        document.querySelector("#savedHousing");
-
-    if (!container) return;
-
-    if (state.savedHousing.length === 0) {
-
-        container.innerHTML = `
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ♡
-                </div>
-
-                <h3>
-                    No saved apartments yet
-                </h3>
-
-                <p>
-                    Save apartments you like and
-                    find them here later.
-                </p>
-
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = "";
-
-    state.savedHousing.forEach(title => {
-
-        const item =
-            document.createElement("div");
-
-        item.className = "card card-body";
-
-        item.innerHTML = `
-            <div class="card-title">
-                ${escapeHTML(title)}
-            </div>
-
-            <div class="card-subtitle">
-                Saved apartment
-            </div>
-        `;
-
-        container.appendChild(item);
-
-    });
-
-}
-
-
-/* =========================================
-   REFRESH SAVED PAGE
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    const savedButton =
-        event.target.closest("[data-page='saved']");
-
-    if (!savedButton) return;
-
-    renderSavedHousing();
-
-});
-
-
-/* =========================================
-   MOBILE MENU
-   ========================================= */
-
-const mobileMenuButton =
-    document.querySelector("#mobileMenuButton");
-
-const mobileOverlay =
-    document.querySelector(".mobile-overlay");
-
-if (mobileMenuButton && mobileOverlay) {
-
-    mobileMenuButton.addEventListener(
-        "click",
-        function() {
-
-            mobileOverlay.classList.toggle("active");
-
-        }
+  const input =
+    document.getElementById(
+      "messageInput"
     );
 
+  const chatBody =
+    document.querySelector(
+      ".chat-body"
+    );
+
+  if (!input || !chatBody) {
+    return;
+  }
+
+  const message =
+    input.value.trim();
+
+  if (!message) {
+    return;
+  }
+
+  const bubble =
+    document.createElement("div");
+
+  bubble.className =
+    "bubble mine";
+
+  bubble.textContent = message;
+
+  chatBody.appendChild(bubble);
+
+  input.value = "";
+
+  chatBody.scrollTop =
+    chatBody.scrollHeight;
+
+  setTimeout(() => {
+    createAutomaticReply();
+  }, 900);
 }
 
 
-/* =========================================
-   CLOSE MOBILE MENU
-   ========================================= */
-
-document.addEventListener("click", function(event) {
-
-    if (
-        event.target.matches(".mobile-overlay")
-    ) {
-
-        event.target.classList.remove("active");
-
-    }
-
-});
+window.sendMessage = sendMessage;
 
 
-/* =========================================
-   FAVORITE BUTTON ANIMATION
-   ========================================= */
+function createAutomaticReply() {
+  const chatBody =
+    document.querySelector(
+      ".chat-body"
+    );
 
-document.addEventListener("click", function(event) {
+  if (!chatBody) return;
 
-    const button =
-        event.target.closest(".favorite-button");
+  const replies = [
+    "That sounds good to me 😊",
+    "Yes! I think our lifestyles are pretty compatible.",
+    "I'm also looking for a place close to the university.",
+    "Great! Maybe we can check some apartments together.",
+  ];
 
-    if (!button) return;
+  const reply =
+    replies[
+      Math.floor(
+        Math.random() *
+          replies.length
+      )
+    ];
 
-    button.style.transform = "scale(1.2)";
-
-    setTimeout(() => {
-
-        button.style.transform = "";
-
-    }, 180);
-
-});
-
-
-/* =========================================
-   SIMPLE MODAL
-   ========================================= */
-
-function openModal(title, content) {
-
-    const oldModal =
-        document.querySelector(".custom-modal");
-
-    if (oldModal) {
-        oldModal.remove();
-    }
-
-    const modal =
-        document.createElement("div");
-
-    modal.className = "custom-modal";
-
-    modal.innerHTML = `
-        <div class="modal-overlay">
-
-            <div class="modal-box">
-
-                <button
-                    class="modal-close"
-                    aria-label="Close"
-                >
-                    ×
-                </button>
-
-                <h2>
-                    ${escapeHTML(title)}
-                </h2>
-
-                <div class="modal-content">
-                    ${content}
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    modal
-        .querySelector(".modal-close")
-        .addEventListener("click", () => {
-            modal.remove();
-        });
-
-    modal
-        .querySelector(".modal-overlay")
-        .addEventListener("click", event => {
-
-            if (
-                event.target.classList.contains(
-                    "modal-overlay"
-                )
-            ) {
-                modal.remove();
-            }
-
-        });
-
-}
-
-
-/* =========================================
-   INITIALIZE
-   ========================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        showPage("home");
-
-        updateProfileProgress();
-
-        console.log(
-            "GlobalStudent Hub loaded successfully 🚀"
-        );
-
-    }
-);
+  const bubble =
+    document.createElement("
