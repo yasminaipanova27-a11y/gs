@@ -1,2233 +1,2308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="GlobalStudent Hub - Find your home, your roommate and your community.">
-    <title>GlobalStudent Hub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalStudent Hub</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    :root {
+      --primary: #5b5ce2;
+      --primary-dark: #4849c9;
+      --primary-light: #efefff;
+      --text: #151729;
+      --muted: #737789;
+      --background: #f7f8fc;
+      --card: #ffffff;
+      --border: #e7e8ef;
+      --success: #16a56b;
+      --warning: #ef9b2d;
+      --danger: #e45858;
+      --radius: 22px;
+      --shadow: 0 12px 35px rgba(33, 35, 68, 0.08);
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /* DESKTOP NAV */
+
+    .desktop-nav {
+      height: 76px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: white;
+      font-weight: 900;
+    }
+
+    .desktop-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-link {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 2px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6c63ff, #9b8cff);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    /* BUTTONS */
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-small {
+      padding: 9px 13px;
+      font-size: 13px;
+    }
+
+    /* LAYOUT */
+
+    .page {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: auto;
+    }
+
+    .section {
+      padding: 38px 0 80px;
+    }
+
+    .section-title {
+      font-size: 30px;
+      margin-bottom: 7px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 60px;
+      padding: 70px 0;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 30px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.03;
+      letter-spacing: -2.4px;
+      margin-bottom: 22px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 620px;
+      margin-bottom: 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 13px;
+      flex-wrap: wrap;
+    }
+
+    .hero-visual {
+      background:
+        radial-gradient(circle at top right, #b6afff, transparent 38%),
+        linear-gradient(135deg, #ececff, #ffffff);
+      min-height: 430px;
+      border-radius: 35px;
+      position: relative;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .mini-house-card {
+      width: 75%;
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      position: absolute;
+      left: 30px;
+      top: 44px;
+    }
+
+    .house-image {
+      height: 160px;
+      border-radius: 15px;
+      background:
+        linear-gradient(rgba(50,50,80,.08), rgba(50,50,80,.08)),
+        url("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80")
+        center/cover;
+      margin-bottom: 13px;
+    }
+
+    .floating-match {
+      position: absolute;
+      right: 22px;
+      bottom: 48px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      width: 210px;
+    }
+
+    .match-score {
+      color: var(--success);
+      font-weight: 900;
+      font-size: 22px;
+    }
+
+    /* STATS */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .stat-number {
+      font-size: 27px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* DASHBOARD */
+
+    .welcome-card {
+      background: linear-gradient(120deg, #5b5ce2, #8586ff);
+      color: white;
+      border-radius: 28px;
+      padding: 34px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .welcome-card h2 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card p {
+      color: rgba(255,255,255,.86);
+    }
+
+    .progress-box {
+      background: rgba(255,255,255,.14);
+      padding: 17px;
+      border-radius: 17px;
+      min-width: 230px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255,255,255,.25);
+      border-radius: 20px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 85%;
+      height: 100%;
+      background: white;
+    }
+
+    /* CARDS */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 5px 16px rgba(20,20,50,.035);
+    }
+
+    .card-body {
+      padding: 19px;
+    }
+
+    .card h3 {
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .listing-image {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+
+    .price {
+      font-weight: 900;
+      font-size: 21px;
+      margin: 10px 0 6px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 13px 0;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 9px;
+      border-radius: 20px;
+      background: #f1f2f7;
+    }
+
+    .badge-green {
+      background: #e9fbf3;
+      color: var(--success);
+    }
+
+    .badge-blue {
+      background: #edf0ff;
+      color: var(--primary);
+    }
+
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* FILTER */
+
+    .filter-bar {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 13px;
+      min-width: 145px;
+      background: white;
+      outline: none;
+    }
+
+    /* ROOMMATES */
+
+    .roommate-card {
+      padding: 22px;
+    }
+
+    .person-top {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 17px;
+    }
+
+    .person-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .compatibility {
+      margin-left: auto;
+      background: #e9fbf3;
+      color: var(--success);
+      padding: 8px 11px;
+      font-weight: 900;
+      border-radius: 12px;
+    }
+
+    .match-list {
+      margin: 15px 0;
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .good {
+      color: #207c5c;
+    }
+
+    .difference {
+      color: #a46b19;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* COMMUNITY */
+
+    .post {
+      padding: 22px;
+    }
+
+    .post-author {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .small-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-text {
+      color: var(--text) !important;
+      font-size: 15px !important;
+      margin-bottom: 15px;
+    }
+
+    .post-meta {
+      display: flex;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* EVENTS */
+
+    .event-date {
+      width: 61px;
+      min-width: 61px;
+      height: 67px;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .event-card {
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+    }
+
+    /* GUIDES */
+
+    .guide-card {
+      padding: 23px;
+    }
+
+    .guide-icon {
+      font-size: 32px;
+      margin-bottom: 13px;
+    }
+
+    /* PROFILE */
+
+    .profile-header {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .profile-photo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .verified {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .profile-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .profile-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .profile-box h3 {
+      margin-bottom: 15px;
+    }
+
+    .lifestyle-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    /* QUESTIONNAIRE */
+
+    .questionnaire {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 26px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select {
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 11px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--primary);
+    }
+
+    /* MESSAGES */
+
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    .conversation-list {
+      border-right: 1px solid var(--border);
+      padding: 15px;
+    }
+
+    .conversation {
+      padding: 13px;
+      border-radius: 14px;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    .conversation.active {
+      background: var(--primary-light);
+    }
+
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 800;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 22px;
+    }
+
+    .bubble {
+      max-width: 65%;
+      padding: 12px 15px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      background: #f1f2f7;
+    }
+
+    .bubble.mine {
+      margin-left: auto;
+      background: var(--primary);
+      color: white;
+    }
+
+    .quick-questions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 18px;
+    }
+
+    .quick-question {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 20px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .message-input {
+      display: flex;
+      gap: 8px;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .message-input input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      outline: none;
+    }
+
+    /* MOBILE NAV */
+
+    .mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 850px) {
+      body {
+        padding-bottom: 78px;
+      }
+
+      .desktop-nav {
+        padding: 0 20px;
+      }
+
+      .desktop-links {
+        display: none;
+      }
+
+      .nav-actions .btn {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 45px 0;
+      }
+
+      .hero h1 {
+        font-size: 45px;
+      }
+
+      .hero-visual {
+        min-height: 380px;
+      }
+
+      .stats,
+      .grid,
+      .grid-2,
+      .profile-details {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .progress-box {
+        width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .messages-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .conversation-list {
+        display: none;
+      }
+
+      .mobile-nav {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        border-top: 1px solid var(--border);
+        z-index: 500;
+      }
+
+      .mobile-nav button {
+        background: white;
+        border: 0;
+        padding: 10px 4px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .mobile-nav button span {
+        display: block;
+        font-size: 21px;
+        margin-bottom: 2px;
+      }
+
+      .mobile-nav button.active {
+        color: var(--primary);
+      }
+
+      .profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     APP CONTAINER
-===================================================== -->
-
 <div class="app">
 
-    <!-- =================================================
-         DESKTOP SIDEBAR
-    ================================================== -->
+  <!-- DESKTOP HEADER -->
 
-    <aside class="sidebar">
+  <header class="desktop-nav">
 
-        <div class="logo">
-            <div class="logo-icon">G</div>
-            <span>GlobalStudent</span>
-        </div>
+    <div class="brand">
+      <div class="brand-logo">G</div>
+      GlobalStudent
+    </div>
 
-        <nav class="sidebar-nav">
+    <nav class="desktop-links">
+      <button class="nav-link active" data-page="home">Home</button>
+      <button class="nav-link" data-page="housing">Housing</button>
+      <button class="nav-link" data-page="roommates">Roommates</button>
+      <button class="nav-link" data-page="community">Community</button>
+      <button class="nav-link" data-page="events">Events</button>
+      <button class="nav-link" data-page="guides">City Guides</button>
+    </nav>
 
-            <a href="#home" class="nav-item active" data-page="home">
-                <span class="nav-icon">⌂</span>
-                <span>Home</span>
-            </a>
+    <div class="nav-actions">
+      <button class="btn btn-outline" data-page="messages">Messages</button>
+      <div class="avatar" data-page="profile">Y</div>
+    </div>
 
-            <a href="#housing" class="nav-item" data-page="housing">
-                <span class="nav-icon">⌂</span>
-                <span>Housing</span>
-            </a>
-
-            <a href="#roommates" class="nav-item" data-page="roommates">
-                <span class="nav-icon">👥</span>
-                <span>Roommates</span>
-            </a>
-
-            <a href="#community" class="nav-item" data-page="community">
-                <span class="nav-icon">💬</span>
-                <span>Community</span>
-            </a>
-
-            <a href="#events" class="nav-item" data-page="events">
-                <span class="nav-icon">🎉</span>
-                <span>Events</span>
-            </a>
-
-            <a href="#guides" class="nav-item" data-page="guides">
-                <span class="nav-icon">🌍</span>
-                <span>City Guides</span>
-            </a>
-
-            <a href="#messages" class="nav-item" data-page="messages">
-                <span class="nav-icon">✉</span>
-                <span>Messages</span>
-                <span class="notification-badge">3</span>
-            </a>
-
-        </nav>
-
-        <div class="sidebar-bottom">
-
-            <a href="#saved" class="nav-item" data-page="saved">
-                <span class="nav-icon">♡</span>
-                <span>Saved</span>
-            </a>
-
-            <a href="#profile" class="nav-item" data-page="profile">
-                <span class="nav-icon">◯</span>
-                <span>Profile</span>
-            </a>
-
-        </div>
-
-    </aside>
+  </header>
 
 
-    <!-- =================================================
-         MAIN CONTENT
-    ================================================== -->
+  <!-- HOME -->
 
-    <main class="main-content">
+  <section class="page active" id="page-home">
 
-        <!-- =============================================
-             TOP HEADER
-        ============================================== -->
+    <div class="container">
 
-        <header class="top-header">
+      <div class="hero">
 
-            <button class="mobile-menu-button" id="mobileMenuButton">
-                ☰
+        <div>
+          <div class="hero-badge">🌍 Made for students moving somewhere new</div>
+
+          <h1>
+            Your New City.<br>
+            Your Home.<br>
+            <span style="color:var(--primary)">Your People.</span>
+          </h1>
+
+          <p>
+            Find verified student housing, meet compatible roommates,
+            and connect with your new community before you even arrive.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-page="housing">
+              Find My Home
             </button>
 
-            <div class="header-search">
-                <span>⌕</span>
-                <input
-                    type="text"
-                    placeholder="Search apartments, students, events..."
-                    id="globalSearch"
-                >
+            <button class="btn btn-outline" data-page="roommates">
+              Find a Roommate
+            </button>
+          </div>
+        </div>
+
+
+        <div class="hero-visual">
+
+          <div class="mini-house-card">
+
+            <div class="house-image"></div>
+
+            <strong>Bright Student Apartment</strong>
+
+            <p>📍 Astana · Near Astana IT University</p>
+
+            <div class="price">₸120,000 / month</div>
+
+            <span class="badge badge-green">
+              ✓ Verified Apartment
+            </span>
+
+          </div>
+
+
+          <div class="floating-match">
+
+            <small>Potential roommate</small>
+
+            <h3>Amina</h3>
+
+            <div class="match-score">94% Match</div>
+
+            <p>
+              Similar lifestyle, schedule and cleanliness preferences.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="stats">
+
+        <div class="stat-card">
+          <div class="stat-number">320+</div>
+          <div class="stat-label">Verified homes</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">1,850+</div>
+          <div class="stat-label">Students</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">36</div>
+          <div class="stat-label">Universities</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">14</div>
+          <div class="stat-label">Cities</div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <div class="section">
+
+      <div class="container">
+
+        <div class="welcome-card">
+
+          <div>
+            <h2>Welcome, Yasmin 👋</h2>
+
+            <p>
+              Your move to Astana is getting closer.
+              Here are your recommendations.
+            </p>
+          </div>
+
+          <div class="progress-box">
+            <strong>Your Profile: 85% complete</strong>
+
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
             </div>
 
-            <div class="header-actions">
+            <small>
+              Complete your lifestyle profile to improve matches.
+            </small>
+          </div>
 
-                <button class="icon-button" id="notificationButton">
-                    🔔
-                    <span class="notification-dot"></span>
-                </button>
+        </div>
 
-                <button class="user-mini-profile" data-page="profile">
-                    <img
-                        src="https://i.pravatar.cc/100?img=47"
-                        alt="Yasmin"
-                    >
-                    <div>
-                        <strong>Yasmin</strong>
-                        <small>Student</small>
-                    </div>
-                </button>
 
+        <h2 class="section-title">Recommended for you</h2>
+
+        <p class="section-subtitle">
+          Based on your university, budget and lifestyle.
+        </p>
+
+
+        <div class="grid">
+
+          <div class="card">
+            <div class="card-body">
+              <div style="font-size:30px">🏠</div>
+
+              <h3>Housing near AITU</h3>
+
+              <p>12 verified apartments match your preferences.</p>
+
+              <br>
+
+              <button class="btn btn-secondary" data-page="housing">
+                Explore Housing
+              </button>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-body">
+              <div style="font-size:30px">👥</div>
+
+              <h3>4 strong roommate matches</h3>
+
+              <p>Your highest compatibility score is 94%.</p>
+
+              <br>
+
+              <button class="btn btn-secondary" data-page="roommates">
+                See Matches
+              </button>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-body">
+              <div style="font-size:30px">🎉</div>
+
+              <h3>Student Welcome Night</h3>
+
+              <p>Friday · 18:30 · Astana</p>
+
+              <br>
+
+              <button class="btn btn-secondary" data-page="events">
+                View Event
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- HOUSING -->
+
+  <section class="page" id="page-housing">
+
+    <div class="container section">
+
+      <h1 class="section-title">Find Student Housing</h1>
+
+      <p class="section-subtitle">
+        Safe, student-friendly homes close to your university.
+      </p>
+
+
+      <div class="filter-bar">
+
+        <input
+          type="text"
+          placeholder="Search city or university"
+        >
+
+        <select>
+          <option>Any price</option>
+          <option>Under ₸100,000</option>
+          <option>₸100,000–150,000</option>
+          <option>₸150,000+</option>
+        </select>
+
+        <select>
+          <option>Any room type</option>
+          <option>Private room</option>
+          <option>Shared room</option>
+          <option>Whole apartment</option>
+        </select>
+
+        <select>
+          <option>Distance</option>
+          <option>Under 1 km</option>
+          <option>Under 3 km</option>
+          <option>Under 5 km</option>
+        </select>
+
+        <button class="btn btn-primary">
+          Search
+        </button>
+
+      </div>
+
+
+      <div class="grid">
+
+        <article class="card">
+
+          <img
+            class="listing-image"
+            src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
+            alt="Apartment"
+          >
+
+          <div class="card-body">
+
+            <div class="row-between">
+              <h3>Bright Student Apartment</h3>
+              <span>♡</span>
             </div>
 
-        </header>
+            <p>📍 Astana · 0.8 km from AITU</p>
 
+            <div class="price">₸120,000/month</div>
 
-        <!-- =================================================
-             PAGE: HOME
-        ================================================== -->
+            <p>
+              2 bedrooms · 1 bathroom · Furnished
+            </p>
 
-        <section class="page active-page" id="page-home">
-
-            <div class="welcome-section">
-
-                <div>
-                    <span class="eyebrow">YOUR STUDENT JOURNEY</span>
-
-                    <h1>
-                        Welcome, Yasmin 👋
-                    </h1>
-
-                    <p>
-                        Your new city, your home, your people.
-                    </p>
-                </div>
-
-                <button class="primary-button" data-page="housing">
-                    Find My Home →
-                </button>
-
+            <div class="badges">
+              <span class="badge badge-green">✓ Verified Apartment</span>
+              <span class="badge badge-blue">✓ Verified Landlord</span>
+              <span class="badge">Wi-Fi</span>
             </div>
 
+            <button class="btn btn-primary">
+              View Apartment
+            </button>
 
-            <!-- PROFILE COMPLETION -->
+          </div>
+        </article>
 
-            <div class="profile-progress-card">
 
-                <div class="progress-content">
+        <article class="card">
 
-                    <div>
-                        <span class="small-label">YOUR PROFILE</span>
+          <img
+            class="listing-image"
+            src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80"
+            alt="Apartment"
+          >
 
-                        <h3>
-                            Complete your profile
-                        </h3>
+          <div class="card-body">
 
-                        <p>
-                            Complete your lifestyle questionnaire to improve your roommate recommendations.
-                        </p>
-                    </div>
-
-                    <div class="progress-circle">
-                        <strong>85%</strong>
-                    </div>
-
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 85%;"></div>
-                </div>
-
-                <button class="text-button" data-page="profile">
-                    Complete profile →
-                </button>
-
+            <div class="row-between">
+              <h3>Modern Room near NU</h3>
+              <span>♡</span>
             </div>
 
+            <p>📍 Astana · 1.1 km from Nazarbayev University</p>
 
-            <!-- QUICK ACTIONS -->
+            <div class="price">₸135,000/month</div>
 
-            <div class="section-header">
+            <p>
+              Private room · Shared kitchen · Furnished
+            </p>
 
-                <div>
-                    <h2>What are you looking for?</h2>
-                    <p>Start your student journey</p>
-                </div>
-
+            <div class="badges">
+              <span class="badge badge-green">✓ Verified Apartment</span>
+              <span class="badge">Wi-Fi</span>
+              <span class="badge">Study desk</span>
             </div>
 
-            <div class="quick-actions">
+            <button class="btn btn-primary">
+              View Apartment
+            </button>
 
-                <button class="quick-card" data-page="housing">
-
-                    <div class="quick-icon housing-icon">
-                        🏠
-                    </div>
-
-                    <div>
-                        <h3>Find Housing</h3>
-                        <p>Verified student apartments</p>
-                    </div>
-
-                    <span>→</span>
-
-                </button>
+          </div>
+        </article>
 
 
-                <button class="quick-card" data-page="roommates">
+        <article class="card">
 
-                    <div class="quick-icon roommate-icon">
-                        👥
-                    </div>
+          <img
+            class="listing-image"
+            src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
+            alt="Apartment"
+          >
 
-                    <div>
-                        <h3>Find a Roommate</h3>
-                        <p>Match with compatible students</p>
-                    </div>
+          <div class="card-body">
 
-                    <span>→</span>
-
-                </button>
-
-
-                <button class="quick-card" data-page="community">
-
-                    <div class="quick-icon community-icon">
-                        🌎
-                    </div>
-
-                    <div>
-                        <h3>Meet Students</h3>
-                        <p>Join your new community</p>
-                    </div>
-
-                    <span>→</span>
-
-                </button>
-
+            <div class="row-between">
+              <h3>Cozy Student Studio</h3>
+              <span>♡</span>
             </div>
 
+            <p>📍 Astana · City Center</p>
 
-            <!-- RECOMMENDED APARTMENTS -->
+            <div class="price">₸150,000/month</div>
 
-            <div class="section-header">
+            <p>
+              Studio · 1 bathroom · Fully furnished
+            </p>
 
-                <div>
-                    <h2>Recommended for you</h2>
-                    <p>Based on your university and preferences</p>
-                </div>
-
-                <button class="text-button" data-page="housing">
-                    View all
-                </button>
-
+            <div class="badges">
+              <span class="badge badge-blue">✓ Verified Landlord</span>
+              <span class="badge">Wi-Fi</span>
+              <span class="badge">Near bus stop</span>
             </div>
 
+            <button class="btn btn-primary">
+              View Apartment
+            </button>
 
-            <div class="apartment-grid">
+          </div>
+        </article>
 
-                <!-- APARTMENT 1 -->
+      </div>
 
-                <article class="apartment-card">
+    </div>
 
-                    <div class="apartment-image">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
-                            alt="Modern apartment"
-                        >
-
-                        <span class="verified-badge">
-                            ✓ Verified
-                        </span>
-
-                        <button class="save-button">
-                            ♡
-                        </button>
-
-                    </div>
-
-                    <div class="apartment-info">
-
-                        <div class="card-location">
-                            📍 Astana · Near AITU
-                        </div>
-
-                        <h3>Bright Student Apartment</h3>
-
-                        <div class="price">
-                            ₸120,000 <span>/ month</span>
-                        </div>
-
-                        <div class="apartment-details">
-                            <span>2 bedrooms</span>
-                            <span>1 bathroom</span>
-                            <span>Wi-Fi</span>
-                        </div>
-
-                        <div class="card-tags">
-                            <span>Furnished</span>
-                            <span>Verified landlord</span>
-                        </div>
-
-                    </div>
-
-                </article>
+  </section>
 
 
-                <!-- APARTMENT 2 -->
+  <!-- ROOMMATES -->
 
-                <article class="apartment-card">
+  <section class="page" id="page-roommates">
 
-                    <div class="apartment-image">
+    <div class="container section">
 
-                        <img
-                            src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"
-                            alt="Student apartment"
-                        >
+      <h1 class="section-title">Smart Roommate Matching</h1>
 
-                        <span class="verified-badge">
-                            ✓ Verified
-                        </span>
-
-                        <button class="save-button">
-                            ♡
-                        </button>
-
-                    </div>
-
-                    <div class="apartment-info">
-
-                        <div class="card-location">
-                            📍 Astana · Yesil district
-                        </div>
-
-                        <h3>Cozy Student Flat</h3>
-
-                        <div class="price">
-                            ₸145,000 <span>/ month</span>
-                        </div>
-
-                        <div class="apartment-details">
-                            <span>3 bedrooms</span>
-                            <span>2 bathrooms</span>
-                            <span>Wi-Fi</span>
-                        </div>
-
-                        <div class="card-tags">
-                            <span>Furnished</span>
-                            <span>Near metro</span>
-                        </div>
-
-                    </div>
-
-                </article>
+      <p class="section-subtitle">
+        Meet students whose lifestyle matches yours.
+      </p>
 
 
-                <!-- APARTMENT 3 -->
+      <div class="filter-bar">
 
-                <article class="apartment-card">
+        <select>
+          <option>All universities</option>
+          <option>Astana IT University</option>
+          <option>Nazarbayev University</option>
+          <option>ENU</option>
+        </select>
 
-                    <div class="apartment-image">
+        <select>
+          <option>Any budget</option>
+          <option>Under ₸100k</option>
+          <option>₸100k–150k</option>
+        </select>
 
-                        <img
-                            src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
-                            alt="Modern student housing"
-                        >
+        <select>
+          <option>Sleep schedule</option>
+          <option>Early bird</option>
+          <option>Normal</option>
+          <option>Night owl</option>
+        </select>
 
-                        <span class="verified-badge">
-                            ✓ Verified
-                        </span>
+        <select>
+          <option>Smoking preference</option>
+          <option>Non-smoker</option>
+          <option>Smoking okay</option>
+        </select>
 
-                        <button class="save-button">
-                            ♡
-                        </button>
+      </div>
 
-                    </div>
 
-                    <div class="apartment-info">
+      <div class="grid">
 
-                        <div class="card-location">
-                            📍 Astana · Central district
-                        </div>
+        <article class="card roommate-card">
 
-                        <h3>Modern Shared Apartment</h3>
+          <div class="person-top">
 
-                        <div class="price">
-                            ₸110,000 <span>/ month</span>
-                        </div>
+            <img
+              class="person-avatar"
+              src="https://i.pravatar.cc/150?img=47"
+              alt="Amina"
+            >
 
-                        <div class="apartment-details">
-                            <span>3 bedrooms</span>
-                            <span>1 bathroom</span>
-                            <span>Wi-Fi</span>
-                        </div>
-
-                        <div class="card-tags">
-                            <span>Furnished</span>
-                            <span>Students only</span>
-                        </div>
-
-                    </div>
-
-                </article>
-
+            <div>
+              <h3>Amina</h3>
+              <p>20 · AITU</p>
+              <p>Computer Science</p>
             </div>
 
-
-            <!-- ROOMMATE RECOMMENDATIONS -->
-
-            <div class="section-header">
-
-                <div>
-                    <h2>Roommates you may like</h2>
-                    <p>Matched using your lifestyle preferences</p>
-                </div>
-
-                <button class="text-button" data-page="roommates">
-                    See all
-                </button>
-
+            <div class="compatibility">
+              94%
             </div>
 
+          </div>
 
-            <div class="roommate-grid">
+          <p>
+            Calm, organized student who enjoys cooking,
+            studying and exploring the city.
+          </p>
 
-                <article class="roommate-card">
+          <div class="match-list">
+            <div class="good">✓ Similar sleep schedule</div>
+            <div class="good">✓ Both prefer a clean apartment</div>
+            <div class="good">✓ Both non-smokers</div>
+            <div class="difference">⚠ Different guest preferences</div>
+          </div>
 
-                    <img
-                        src="https://i.pravatar.cc/200?img=47"
-                        alt="Amina"
-                        class="roommate-photo"
-                    >
+          <div class="actions">
+            <button class="btn btn-primary btn-small">
+              View Profile
+            </button>
 
-                    <div class="roommate-main">
+            <button class="btn btn-secondary btn-small">
+              ♡ Like
+            </button>
 
-                        <div class="roommate-name-row">
+            <button
+              class="btn btn-outline btn-small"
+              data-page="messages"
+            >
+              Message
+            </button>
+          </div>
 
-                            <div>
-                                <h3>Amina</h3>
-                                <p>21 · AITU</p>
-                            </div>
-
-                            <span class="compatibility">
-                                94%
-                            </span>
-
-                        </div>
-
-                        <p class="roommate-program">
-                            Computer Science
-                        </p>
-
-                        <div class="lifestyle-tags">
-                            <span>🌙 Night owl</span>
-                            <span>✨ Clean</span>
-                            <span>🚭 Non-smoker</span>
-                        </div>
-
-                    </div>
-
-                </article>
+        </article>
 
 
-                <article class="roommate-card">
+        <article class="card roommate-card">
 
-                    <img
-                        src="https://i.pravatar.cc/200?img=12"
-                        alt="Daniel"
-                        class="roommate-photo"
-                    >
+          <div class="person-top">
 
-                    <div class="roommate-main">
+            <img
+              class="person-avatar"
+              src="https://i.pravatar.cc/150?img=12"
+              alt="Daniel"
+            >
 
-                        <div class="roommate-name-row">
-
-                            <div>
-                                <h3>Daniel</h3>
-                                <p>22 · Nazarbayev University</p>
-                            </div>
-
-                            <span class="compatibility">
-                                89%
-                            </span>
-
-                        </div>
-
-                        <p class="roommate-program">
-                            Business Administration
-                        </p>
-
-                        <div class="lifestyle-tags">
-                            <span>🌙 Night owl</span>
-                            <span>🍳 Cooks</span>
-                            <span>🚭 Non-smoker</span>
-                        </div>
-
-                    </div>
-
-                </article>
-
+            <div>
+              <h3>Daniel</h3>
+              <p>21 · Nazarbayev University</p>
+              <p>Economics</p>
             </div>
 
-
-            <!-- UPCOMING EVENTS -->
-
-            <div class="section-header">
-
-                <div>
-                    <h2>Upcoming events</h2>
-                    <p>Meet people before you arrive</p>
-                </div>
-
-                <button class="text-button" data-page="events">
-                    View events
-                </button>
-
+            <div class="compatibility">
+              89%
             </div>
 
+          </div>
 
-            <div class="event-list">
+          <p>
+            International student from Germany.
+            Social but values personal study time.
+          </p>
 
-                <article class="event-card">
+          <div class="match-list">
+            <div class="good">✓ Similar budget</div>
+            <div class="good">✓ Similar noise tolerance</div>
+            <div class="good">✓ Both enjoy cooking</div>
+            <div class="difference">⚠ Different sleep schedules</div>
+          </div>
 
-                    <div class="event-date">
-                        <strong>27</strong>
-                        <span>SEP</span>
-                    </div>
+          <div class="actions">
+            <button class="btn btn-primary btn-small">
+              View Profile
+            </button>
 
-                    <div class="event-info">
-                        <span class="event-category">NETWORKING</span>
-                        <h3>International Student Meetup</h3>
-                        <p>📍 Astana Hub · 18:00</p>
-                    </div>
+            <button class="btn btn-secondary btn-small">
+              ♡ Like
+            </button>
 
-                    <button class="secondary-button">
-                        Join
-                    </button>
+            <button
+              class="btn btn-outline btn-small"
+              data-page="messages"
+            >
+              Message
+            </button>
+          </div>
 
-                </article>
+        </article>
 
 
-                <article class="event-card">
+        <article class="card roommate-card">
 
-                    <div class="event-date">
-                        <strong>30</strong>
-                        <span>SEP</span>
-                    </div>
+          <div class="person-top">
 
-                    <div class="event-info">
-                        <span class="event-category">LANGUAGE</span>
-                        <h3>Language Exchange Night</h3>
-                        <p>📍 Coffee Boom · 19:00</p>
-                    </div>
+            <img
+              class="person-avatar"
+              src="https://i.pravatar.cc/150?img=32"
+              alt="Sara"
+            >
 
-                    <button class="secondary-button">
-                        Join
-                    </button>
-
-                </article>
-
+            <div>
+              <h3>Sara</h3>
+              <p>19 · ENU</p>
+              <p>International Relations</p>
             </div>
 
-        </section>
-
-
-        <!-- =================================================
-             PAGE: HOUSING
-        ================================================== -->
-
-        <section class="page" id="page-housing">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">STUDENT HOUSING</span>
-                    <h1>Find your new home</h1>
-                    <p>Verified student-friendly apartments in Astana.</p>
-                </div>
-
-                <button class="primary-button">
-                    + List a Property
-                </button>
-
+            <div class="compatibility">
+              84%
             </div>
 
+          </div>
 
-            <!-- SEARCH -->
+          <p>
+            Exchange student who likes a balanced social
+            lifestyle and organized shared spaces.
+          </p>
 
-            <div class="housing-search">
+          <div class="match-list">
+            <div class="good">✓ Both non-smokers</div>
+            <div class="good">✓ Similar cleanliness</div>
+            <div class="good">✓ Similar social lifestyle</div>
+            <div class="difference">⚠ Different cooking habits</div>
+          </div>
 
-                <div class="search-field">
-                    <label>Location</label>
-                    <input type="text" placeholder="Astana">
-                </div>
+          <div class="actions">
+            <button class="btn btn-primary btn-small">
+              View Profile
+            </button>
 
-                <div class="search-field">
-                    <label>University</label>
-                    <select>
-                        <option>Any university</option>
-                        <option>Astana IT University</option>
-                        <option>Nazarbayev University</option>
-                        <option>ENU</option>
-                    </select>
-                </div>
+            <button class="btn btn-secondary btn-small">
+              ♡ Like
+            </button>
 
-                <div class="search-field">
-                    <label>Move-in</label>
-                    <input type="date">
-                </div>
+            <button
+              class="btn btn-outline btn-small"
+              data-page="messages"
+            >
+              Message
+            </button>
+          </div>
 
-                <button class="primary-button">
-                    Search
-                </button>
+        </article>
 
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- COMMUNITY -->
+
+  <section class="page" id="page-community">
+
+    <div class="container section">
+
+      <div class="row-between">
+
+        <div>
+          <h1 class="section-title">Student Community</h1>
+          <p class="section-subtitle">
+            Ask questions, meet people and discover student life.
+          </p>
+        </div>
+
+        <button class="btn btn-primary">
+          + Create Post
+        </button>
+
+      </div>
+
+
+      <div class="badges" style="margin-bottom:25px">
+        <span class="badge badge-blue">New Students</span>
+        <span class="badge">International Students</span>
+        <span class="badge">Housing</span>
+        <span class="badge">Study Groups</span>
+        <span class="badge">City Life</span>
+        <span class="badge">Travel</span>
+        <span class="badge">Food</span>
+        <span class="badge">Language Exchange</span>
+      </div>
+
+
+      <div class="grid-2">
+
+        <article class="card post">
+
+          <div class="post-author">
+
+            <img
+              src="https://i.pravatar.cc/100?img=44"
+              class="small-avatar"
+              alt=""
+            >
+
+            <div>
+              <strong>Sofia Martinez</strong>
+              <p>Exchange student · 18 min ago</p>
             </div>
 
+          </div>
 
-            <!-- FILTERS -->
+          <p class="post-text">
+            Hi everyone! I’m moving to Astana next month.
+            Which SIM card would you recommend for students?
+          </p>
 
-            <div class="filter-row">
+          <div class="post-meta">
+            <span>♡ 24</span>
+            <span>💬 12 comments</span>
+          </div>
 
-                <button class="filter-button">
-                    💰 Price
-                </button>
+        </article>
 
-                <button class="filter-button">
-                    📍 Distance
-                </button>
 
-                <button class="filter-button">
-                    🛏 Room type
-                </button>
+        <article class="card post">
 
-                <button class="filter-button">
-                    🧑‍🤝‍🧑 Roommates
-                </button>
+          <div class="post-author">
 
-                <button class="filter-button">
-                    ✓ Verified only
-                </button>
+            <img
+              src="https://i.pravatar.cc/100?img=15"
+              class="small-avatar"
+              alt=""
+            >
 
-                <button class="filter-button">
-                    ⚙ More filters
-                </button>
-
+            <div>
+              <strong>Arman Bek</strong>
+              <p>AITU student · 42 min ago</p>
             </div>
 
+          </div>
 
-            <div class="housing-layout">
+          <p class="post-text">
+            Anyone interested in creating a weekend study group
+            for Python and Data Analytics?
+          </p>
 
-                <!-- LIST -->
+          <div class="post-meta">
+            <span>♡ 38</span>
+            <span>💬 19 comments</span>
+          </div>
 
-                <div class="housing-results">
+        </article>
 
-                    <div class="results-header">
-                        <strong>126 apartments</strong>
+      </div>
 
-                        <select>
-                            <option>Recommended</option>
-                            <option>Lowest price</option>
-                            <option>Closest to university</option>
-                        </select>
-                    </div>
+    </div>
 
-
-                    <article class="housing-card">
-
-                        <div class="housing-card-image">
-
-                            <img
-                                src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80"
-                                alt="Bright Student Apartment"
-                            >
-
-                            <span class="verified-badge">
-                                ✓ Verified
-                            </span>
-
-                        </div>
-
-                        <div class="housing-card-content">
-
-                            <div class="card-location">
-                                📍 Astana · 0.8 km from AITU
-                            </div>
-
-                            <h2>Bright Student Apartment</h2>
-
-                            <p class="housing-description">
-                                Modern furnished apartment with a quiet study area and fast Wi-Fi.
-                            </p>
-
-                            <div class="housing-price">
-                                ₸120,000 <span>/ month</span>
-                            </div>
-
-                            <div class="housing-features">
-                                <span>🛏 2 bedrooms</span>
-                                <span>🚿 1 bathroom</span>
-                                <span>📶 Wi-Fi</span>
-                                <span>🪑 Furnished</span>
-                            </div>
-
-                            <div class="verification-row">
-                                <span>🟢 Verified Apartment</span>
-                                <span>🔵 Verified Landlord</span>
-                            </div>
-
-                            <button class="primary-button full-width">
-                                View Apartment
-                            </button>
-
-                        </div>
-
-                    </article>
+  </section>
 
 
-                    <article class="housing-card">
+  <!-- EVENTS -->
 
-                        <div class="housing-card-image">
+  <section class="page" id="page-events">
 
-                            <img
-                                src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80"
-                                alt="Cozy Student Flat"
-                            >
+    <div class="container section">
 
-                            <span class="verified-badge">
-                                ✓ Verified
-                            </span>
+      <h1 class="section-title">Events in Astana</h1>
 
-                        </div>
-
-                        <div class="housing-card-content">
-
-                            <div class="card-location">
-                                📍 Astana · 1.4 km from AITU
-                            </div>
-
-                            <h2>Cozy Student Flat</h2>
-
-                            <p class="housing-description">
-                                Spacious apartment suitable for three students.
-                            </p>
-
-                            <div class="housing-price">
-                                ₸145,000 <span>/ month</span>
-                            </div>
-
-                            <div class="housing-features">
-                                <span>🛏 3 bedrooms</span>
-                                <span>🚿 2 bathrooms</span>
-                                <span>📶 Wi-Fi</span>
-                                <span>🪑 Furnished</span>
-                            </div>
-
-                            <div class="verification-row">
-                                <span>🟢 Verified Apartment</span>
-                                <span>🔵 Verified Landlord</span>
-                            </div>
-
-                            <button class="primary-button full-width">
-                                View Apartment
-                            </button>
-
-                        </div>
-
-                    </article>
-
-                </div>
+      <p class="section-subtitle">
+        Meet new people and experience student life.
+      </p>
 
 
-                <!-- MAP -->
+      <div class="grid-2">
 
-                <div class="housing-map">
+        <article class="card event-card">
 
-                    <div class="map-placeholder">
+          <div class="event-date">
+            26<br>
+            SEP
+          </div>
 
-                        <div class="map-grid"></div>
+          <div>
+            <h3>International Student Welcome Night</h3>
+            <p>18:30 · AITU Campus</p>
+            <p>Organized by GlobalStudent Community</p>
 
-                        <div class="map-pin pin-1">₸120k</div>
-                        <div class="map-pin pin-2">₸145k</div>
-                        <div class="map-pin pin-3">₸110k</div>
-                        <div class="map-pin pin-4">₸135k</div>
-
-                        <div class="map-center">
-                            📍 AITU
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div class="badges">
+              <span class="badge">126 participants</span>
+              <span class="badge">International</span>
             </div>
 
-        </section>
+            <button class="btn btn-primary btn-small">
+              Join Event
+            </button>
+
+            <button class="btn btn-outline btn-small">
+              Save
+            </button>
+          </div>
+
+        </article>
 
 
-        <!-- =================================================
-             PAGE: ROOMMATES
-        ================================================== -->
+        <article class="card event-card">
 
-        <section class="page" id="page-roommates">
+          <div class="event-date">
+            29<br>
+            SEP
+          </div>
 
-            <div class="page-heading">
+          <div>
+            <h3>Kazakh Language Exchange</h3>
+            <p>17:00 · National Library</p>
+            <p>Practice Kazakh, English and Russian.</p>
 
-                <div>
-                    <span class="eyebrow">SMART MATCHING</span>
-
-                    <h1>Find your people</h1>
-
-                    <p>
-                        We match students based on lifestyle, habits and living preferences.
-                    </p>
-                </div>
-
-                <button class="primary-button">
-                    Update Preferences
-                </button>
-
+            <div class="badges">
+              <span class="badge">64 participants</span>
+              <span class="badge">Language Exchange</span>
             </div>
 
+            <button class="btn btn-primary btn-small">
+              Join Event
+            </button>
 
-            <!-- COMPATIBILITY EXPLANATION -->
+            <button class="btn btn-outline btn-small">
+              Save
+            </button>
+          </div>
 
-            <div class="matching-banner">
+        </article>
 
-                <div class="matching-icon">
-                    ✨
-                </div>
 
-                <div>
-                    <h3>Your Lifestyle Profile is ready</h3>
+        <article class="card event-card">
 
-                    <p>
-                        We use your preferences to find people who could be comfortable living with you.
-                    </p>
-                </div>
+          <div class="event-date">
+            02<br>
+            OCT
+          </div>
 
+          <div>
+            <h3>Astana City Walk</h3>
+            <p>12:00 · Baiterek</p>
+            <p>Discover Astana together with local students.</p>
+
+            <div class="badges">
+              <span class="badge">82 participants</span>
+              <span class="badge">City Life</span>
             </div>
 
+            <button class="btn btn-primary btn-small">
+              Join Event
+            </button>
 
-            <!-- FILTERS -->
+            <button class="btn btn-outline btn-small">
+              Save
+            </button>
+          </div>
 
-            <div class="filter-row">
+        </article>
 
-                <button class="filter-button">
-                    University
-                </button>
+      </div>
 
-                <button class="filter-button">
-                    Age
-                </button>
+    </div>
 
-                <button class="filter-button">
-                    💰 Budget
-                </button>
+  </section>
 
-                <button class="filter-button">
-                    🌙 Sleep schedule
-                </button>
 
-                <button class="filter-button">
-                    ✨ Cleanliness
-                </button>
+  <!-- GUIDES -->
 
-                <button class="filter-button">
-                    More filters
-                </button>
+  <section class="page" id="page-guides">
 
+    <div class="container section">
+
+      <h1 class="section-title">Astana Student Guide</h1>
+
+      <p class="section-subtitle">
+        Everything you need to feel at home in a new city.
+      </p>
+
+
+      <div class="grid">
+
+        <div class="card guide-card">
+          <div class="guide-icon">🚌</div>
+          <h3>Getting Around</h3>
+          <p>
+            Public transport, buses, taxi services
+            and useful transport apps.
+          </p>
+        </div>
+
+
+        <div class="card guide-card">
+          <div class="guide-icon">☕</div>
+          <h3>Student Life</h3>
+          <p>
+            Cafes, libraries, study spaces,
+            affordable restaurants and entertainment.
+          </p>
+        </div>
+
+
+        <div class="card guide-card">
+          <div class="guide-icon">📱</div>
+          <h3>SIM Cards</h3>
+          <p>
+            Compare mobile providers and learn
+            how to get connected after arrival.
+          </p>
+        </div>
+
+
+        <div class="card guide-card">
+          <div class="guide-icon">🏦</div>
+          <h3>Banking</h3>
+          <p>
+            Information about local banks,
+            cards and student-friendly services.
+          </p>
+        </div>
+
+
+        <div class="card guide-card">
+          <div class="guide-icon">🆘</div>
+          <h3>Emergency Information</h3>
+          <p>
+            Important emergency contacts,
+            hospitals and university support.
+          </p>
+        </div>
+
+
+        <div class="card guide-card">
+          <div class="guide-icon">🇰🇿</div>
+          <h3>Culture & Etiquette</h3>
+          <p>
+            Learn useful Kazakh phrases,
+            customs and cultural etiquette.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- MESSAGES -->
+
+  <section class="page" id="page-messages">
+
+    <div class="container section">
+
+      <h1 class="section-title">Messages</h1>
+
+      <p class="section-subtitle">
+        Connect with roommates and other students.
+      </p>
+
+
+      <div class="messages-layout">
+
+        <div class="conversation-list">
+
+          <div class="conversation active">
+            <img
+              src="https://i.pravatar.cc/100?img=47"
+              class="small-avatar"
+            >
+
+            <div>
+              <strong>Amina</strong>
+              <p>Sounds good to me!</p>
+            </div>
+          </div>
+
+
+          <div class="conversation">
+            <img
+              src="https://i.pravatar.cc/100?img=12"
+              class="small-avatar"
+            >
+
+            <div>
+              <strong>Daniel</strong>
+              <p>When are you moving?</p>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="chat-area">
+
+          <div class="chat-header">
+            Amina · 94% compatible
+          </div>
+
+
+          <div class="chat-body">
+
+            <div class="bubble">
+              Hi Yasmin! I saw that we're a 94% roommate match 👋
             </div>
 
-
-            <div class="roommate-grid large-grid">
-
-                <!-- ROOMMATE 1 -->
-
-                <article class="roommate-profile-card">
-
-                    <div class="profile-card-image">
-
-                        <img
-                            src="https://i.pravatar.cc/400?img=47"
-                            alt="Amina"
-                        >
-
-                        <span class="compatibility-large">
-                            94% match
-                        </span>
-
-                    </div>
-
-                    <div class="roommate-profile-content">
-
-                        <div class="profile-title">
-
-                            <div>
-                                <h2>Amina, 21</h2>
-                                <p>Astana IT University</p>
-                            </div>
-
-                            <button class="save-button">
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <p class="program">
-                            Computer Science
-                        </p>
-
-                        <p class="bio">
-                            I enjoy quiet evenings, cooking with friends and keeping the apartment organized.
-                        </p>
-
-                        <h4>Why you match</h4>
-
-                        <div class="match-list">
-
-                            <span class="match-positive">
-                                ✓ Similar sleep schedule
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Both prefer clean spaces
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Both non-smokers
-                            </span>
-
-                            <span class="match-negative">
-                                ! Different guest preferences
-                            </span>
-
-                        </div>
-
-                        <div class="profile-actions">
-
-                            <button class="secondary-button">
-                                View Profile
-                            </button>
-
-                            <button class="primary-button">
-                                Message
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <!-- ROOMMATE 2 -->
-
-                <article class="roommate-profile-card">
-
-                    <div class="profile-card-image">
-
-                        <img
-                            src="https://i.pravatar.cc/400?img=12"
-                            alt="Daniel"
-                        >
-
-                        <span class="compatibility-large">
-                            89% match
-                        </span>
-
-                    </div>
-
-                    <div class="roommate-profile-content">
-
-                        <div class="profile-title">
-
-                            <div>
-                                <h2>Daniel, 22</h2>
-                                <p>Nazarbayev University</p>
-                            </div>
-
-                            <button class="save-button">
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <p class="program">
-                            Business Administration
-                        </p>
-
-                        <p class="bio">
-                            International student who likes cooking, travelling and meeting new people.
-                        </p>
-
-                        <h4>Why you match</h4>
-
-                        <div class="match-list">
-
-                            <span class="match-positive">
-                                ✓ Similar social lifestyle
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Both enjoy cooking
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Similar noise tolerance
-                            </span>
-
-                            <span class="match-negative">
-                                ! Different sleep schedules
-                            </span>
-
-                        </div>
-
-                        <div class="profile-actions">
-
-                            <button class="secondary-button">
-                                View Profile
-                            </button>
-
-                            <button class="primary-button">
-                                Message
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <!-- ROOMMATE 3 -->
-
-                <article class="roommate-profile-card">
-
-                    <div class="profile-card-image">
-
-                        <img
-                            src="https://i.pravatar.cc/400?img=32"
-                            alt="Sara"
-                        >
-
-                        <span class="compatibility-large">
-                            84% match
-                        </span>
-
-                    </div>
-
-                    <div class="roommate-profile-content">
-
-                        <div class="profile-title">
-
-                            <div>
-                                <h2>Sara, 20</h2>
-                                <p>ENU</p>
-                            </div>
-
-                            <button class="save-button">
-                                ♡
-                            </button>
-
-                        </div>
-
-                        <p class="program">
-                            International Relations
-                        </p>
-
-                        <p class="bio">
-                            I am social but also value personal space and a peaceful study environment.
-                        </p>
-
-                        <h4>Why you match</h4>
-
-                        <div class="match-list">
-
-                            <span class="match-positive">
-                                ✓ Both value personal space
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Similar study preferences
-                            </span>
-
-                            <span class="match-positive">
-                                ✓ Non-smokers
-                            </span>
-
-                            <span class="match-negative">
-                                ! Different social habits
-                            </span>
-
-                        </div>
-
-                        <div class="profile-actions">
-
-                            <button class="secondary-button">
-                                View Profile
-                            </button>
-
-                            <button class="primary-button">
-                                Message
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
+            <div class="bubble mine">
+              Hi! Yes, I saw that too. Are you planning to move in September?
             </div>
 
-        </section>
-
-
-        <!-- =================================================
-             PAGE: COMMUNITY
-        ================================================== -->
-
-        <section class="page" id="page-community">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">STUDENT COMMUNITY</span>
-
-                    <h1>Meet your community</h1>
-
-                    <p>
-                        Ask questions, share experiences and meet students in your city.
-                    </p>
-                </div>
-
-                <button class="primary-button">
-                    + Create Post
-                </button>
-
+            <div class="bubble">
+              Yes! I'm looking for a place close to AITU.
             </div>
 
+          </div>
 
-            <div class="community-layout">
 
-                <!-- COMMUNITY FEED -->
+          <div class="quick-questions">
 
-                <div class="community-feed">
+            <button class="quick-question">
+              What’s your sleep schedule?
+            </button>
 
-                    <div class="community-tabs">
+            <button class="quick-question">
+              How often do you clean?
+            </button>
 
-                        <button class="active">
-                            For You
-                        </button>
+            <button class="quick-question">
+              Do you usually have guests?
+            </button>
 
-                        <button>
-                            New Students
-                        </button>
+          </div>
 
-                        <button>
-                            Housing
-                        </button>
 
-                        <button>
-                            Study
-                        </button>
+          <div class="message-input">
 
-                    </div>
+            <input
+              id="messageInput"
+              type="text"
+              placeholder="Write a message..."
+            >
 
+            <button
+              class="btn btn-primary"
+              onclick="sendMessage()"
+            >
+              Send
+            </button>
 
-                    <!-- POST -->
+          </div>
 
-                    <article class="post-card">
+        </div>
 
-                        <div class="post-header">
+      </div>
 
-                            <img
-                                src="https://i.pravatar.cc/100?img=25"
-                                alt="Alex"
-                            >
+    </div>
 
-                            <div>
-                                <strong>Alex Morgan</strong>
-                                <span>International Students · 2h</span>
-                            </div>
+  </section>
 
-                            <button>•••</button>
 
-                        </div>
+  <!-- PROFILE -->
 
-                        <div class="post-content">
+  <section class="page" id="page-profile">
 
-                            <h3>
-                                What should I know before moving to Astana?
-                            </h3>
+    <div class="container section">
 
-                            <p>
-                                I'm arriving next month for my exchange semester.
-                                Any tips about transportation, SIM cards and everyday life?
-                            </p>
+      <h1 class="section-title">My Profile</h1>
 
-                        </div>
+      <p class="section-subtitle">
+        Your student identity and living preferences.
+      </p>
 
-                        <div class="post-actions">
 
-                            <button>♡ 24</button>
-                            <button>💬 8</button>
-                            <button>↗ Share</button>
+      <div class="profile-header">
 
-                        </div>
+        <img
+          src="https://i.pravatar.cc/200?img=49"
+          class="profile-photo"
+          alt="Yasmin"
+        >
 
-                    </article>
+        <div>
 
+          <h2>Yasmin Aipanova</h2>
 
-                    <article class="post-card">
+          <p>
+            Astana IT University · IT Management
+          </p>
 
-                        <div class="post-header">
+          <p>
+            📍 Astana, Kazakhstan
+          </p>
 
-                            <img
-                                src="https://i.pravatar.cc/100?img=44"
-                                alt="Maya"
-                            >
+          <br>
 
-                            <div>
-                                <strong>Maya Chen</strong>
-                                <span>AITU Community · 5h</span>
-                            </div>
+          <div class="verified">
+            ✓ University Email Verified
+          </div>
 
-                            <button>•••</button>
+        </div>
 
-                        </div>
+        <button
+          class="btn btn-primary"
+          style="margin-left:auto"
+          data-page="onboarding"
+        >
+          Edit Lifestyle Profile
+        </button>
 
-                        <div class="post-content">
+      </div>
 
-                            <h3>
-                                Looking for a study group 📚
-                            </h3>
 
-                            <p>
-                                Is anyone studying Business or IT Management and wants
-                                to meet once or twice a week?
-                            </p>
+      <div class="profile-details">
 
-                        </div>
+        <div class="profile-box">
 
-                        <div class="post-actions">
+          <h3>About Me</h3>
 
-                            <button>♡ 18</button>
-                            <button>💬 5</button>
-                            <button>↗ Share</button>
+          <p>
+            IT student interested in technology, travel
+            and meeting students from different cultures.
+            I prefer a clean and comfortable home with
+            a balanced social environment.
+          </p>
 
-                        </div>
+          <br>
 
-                    </article>
+          <h3>Interests</h3>
 
-                </div>
+          <div class="badges">
+            <span class="badge">Technology</span>
+            <span class="badge">Travel</span>
+            <span class="badge">Movies</span>
+            <span class="badge">Photography</span>
+          </div>
 
+          <br>
 
-                <!-- COMMUNITY SIDEBAR -->
+          <h3>Languages</h3>
 
-                <aside class="community-sidebar">
+          <div class="badges">
+            <span class="badge">Kazakh</span>
+            <span class="badge">Russian</span>
+            <span class="badge">English</span>
+          </div>
 
-                    <div class="community-widget">
+        </div>
 
-                        <h3>Popular communities</h3>
 
-                        <div class="group-item">
-                            <span>🌍</span>
-                            <div>
-                                <strong>International Students</strong>
-                                <small>2.4k members</small>
-                            </div>
-                        </div>
+        <div class="profile-box">
 
-                        <div class="group-item">
-                            <span>🎓</span>
-                            <div>
-                                <strong>AITU Students</strong>
-                                <small>1.8k members</small>
-                            </div>
-                        </div>
+          <h3>Living Compatibility</h3>
 
-                        <div class="group-item">
-                            <span>🏠</span>
-                            <div>
-                                <strong>Astana Housing</strong>
-                                <small>1.2k members</small>
-                            </div>
-                        </div>
+          <div class="lifestyle-item">
+            <span>Cleanliness</span>
+            <strong>Very important</strong>
+          </div>
 
-                    </div>
+          <div class="lifestyle-item">
+            <span>Sleep schedule</span>
+            <strong>Normal</strong>
+          </div>
 
+          <div class="lifestyle-item">
+            <span>Noise tolerance</span>
+            <strong>Moderate</strong>
+          </div>
 
-                    <div class="community-widget">
+          <div class="lifestyle-item">
+            <span>Smoking</span>
+            <strong>Non-smoker</strong>
+          </div>
 
-                        <h3>Topics</h3>
+          <div class="lifestyle-item">
+            <span>Social lifestyle</span>
+            <strong>Balanced</strong>
+          </div>
 
-                        <div class="topic-tags">
+          <div class="lifestyle-item">
+            <span>Cooking</span>
+            <strong>Sometimes</strong>
+          </div>
 
-                            <span>City Life</span>
-                            <span>Housing</span>
-                            <span>Study Groups</span>
-                            <span>Travel</span>
-                            <span>Food</span>
-                            <span>Language Exchange</span>
+          <div class="lifestyle-item">
+            <span>Privacy</span>
+            <strong>Balanced</strong>
+          </div>
 
-                        </div>
+        </div>
 
-                    </div>
+      </div>
 
-                </aside>
+    </div>
 
-            </div>
+  </section>
 
-        </section>
 
+  <!-- ONBOARDING -->
 
-        <!-- =================================================
-             PAGE: EVENTS
-        ================================================== -->
+  <section class="page" id="page-onboarding">
 
-        <section class="page" id="page-events">
+    <div class="container section">
 
-            <div class="page-heading">
+      <h1 class="section-title">
+        Build Your Lifestyle Profile
+      </h1>
 
-                <div>
-                    <span class="eyebrow">DISCOVER & CONNECT</span>
+      <p class="section-subtitle">
+        This helps us find roommates who match how you actually live.
+      </p>
 
-                    <h1>What's happening?</h1>
 
-                    <p>
-                        Discover events, workshops and activities around your student community.
-                    </p>
-                </div>
+      <div class="questionnaire">
 
-                <button class="primary-button">
-                    + Create Event
-                </button>
+        <div class="form-grid">
 
-            </div>
+          <div class="field">
+            <label>Name</label>
+            <input value="Yasmin">
+          </div>
 
+          <div class="field">
+            <label>Age</label>
+            <input type="number" value="20">
+          </div>
 
-            <div class="event-filters">
+          <div class="field">
+            <label>University</label>
+            <input value="Astana IT University">
+          </div>
 
-                <button class="active">All</button>
-                <button>Networking</button>
-                <button>University</button>
-                <button>Language</button>
-                <button>Sports</button>
-                <button>Workshops</button>
+          <div class="field">
+            <label>Study Program</label>
+            <input value="IT Management">
+          </div>
 
-            </div>
+          <div class="field">
+            <label>Move-in Date</label>
+            <input type="date">
+          </div>
 
+          <div class="field">
+            <label>Length of Stay</label>
 
-            <div class="events-grid">
+            <select>
+              <option>1 semester</option>
+              <option>1 year</option>
+              <option>2+ years</option>
+            </select>
+          </div>
 
-                <article class="event-large-card">
+          <div class="field">
+            <label>Cleanliness</label>
 
-                    <div class="event-cover event-cover-1">
+            <select>
+              <option>Very important</option>
+              <option>Important</option>
+              <option>Flexible</option>
+            </select>
+          </div>
 
-                        <span>NETWORKING</span>
+          <div class="field">
+            <label>Noise Level</label>
 
-                    </div>
+            <select>
+              <option>Complete silence</option>
+              <option selected>Moderate noise is okay</option>
+              <option>I don’t mind noise</option>
+            </select>
+          </div>
 
-                    <div class="event-large-content">
+          <div class="field">
+            <label>Sleep Schedule</label>
 
-                        <div class="event-date-large">
-                            <strong>27</strong>
-                            <span>SEP</span>
-                        </div>
+            <select>
+              <option>Early bird</option>
+              <option selected>Normal schedule</option>
+              <option>Night owl</option>
+            </select>
+          </div>
 
-                        <div>
+          <div class="field">
+            <label>Guests</label>
 
-                            <h2>International Student Meetup</h2>
+            <select>
+              <option>I rarely have guests</option>
+              <option selected>Occasionally</option>
+              <option>Frequently</option>
+            </select>
+          </div>
 
-                            <p>📍 Astana Hub</p>
-                            <p>🕕 18:00 – 20:00</p>
-                            <p>👥 48 students joined</p>
+          <div class="field">
+            <label>Smoking</label>
 
-                        </div>
+            <select>
+              <option selected>Non-smoker</option>
+              <option>Smoking is okay</option>
+              <option>Smoking is not okay</option>
+            </select>
+          </div>
 
-                    </div>
+          <div class="field">
+            <label>Social Lifestyle</label>
 
-                    <div class="event-card-bottom">
+            <select>
+              <option>Mostly quiet/private</option>
+              <option selected>Balanced</option>
+              <option>Very social</option>
+            </select>
+          </div>
 
-                        <span>Organized by GlobalStudent Hub</span>
+          <div class="field">
+            <label>Cooking</label>
 
-                        <button class="primary-button">
-                            Join Event
-                        </button>
+            <select>
+              <option>Cook frequently</option>
+              <option selected>Sometimes</option>
+              <option>Rarely</option>
+            </select>
+          </div>
 
-                    </div>
+          <div class="field">
+            <label>Privacy</label>
 
-                </article>
+            <select>
+              <option>I strongly prefer personal space</option>
+              <option selected>Balanced</option>
+              <option>I enjoy spending time with roommates</option>
+            </select>
+          </div>
 
+        </div>
 
-                <article class="event-large-card">
+        <br>
 
-                    <div class="event-cover event-cover-2">
+        <button
+          class="btn btn-primary"
+          onclick="saveProfile()"
+        >
+          Generate Lifestyle Profile
+        </button>
 
-                        <span>LANGUAGE</span>
+      </div>
 
-                    </div>
+    </div>
 
-                    <div class="event-large-content">
-
-                        <div class="event-date-large">
-                            <strong>30</strong>
-                            <span>SEP</span>
-                        </div>
-
-                        <div>
-
-                            <h2>Language Exchange Night</h2>
-
-                            <p>📍 Coffee Boom</p>
-                            <p>🕕 19:00 – 21:00</p>
-                            <p>👥 32 students joined</p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="event-card-bottom">
-
-                        <span>Organized by Student Community</span>
-
-                        <button class="primary-button">
-                            Join Event
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <article class="event-large-card">
-
-                    <div class="event-cover event-cover-3">
-
-                        <span>SPORTS</span>
-
-                    </div>
-
-                    <div class="event-large-content">
-
-                        <div class="event-date-large">
-                            <strong>04</strong>
-                            <span>OCT</span>
-                        </div>
-
-                        <div>
-
-                            <h2>Weekend Football Meetup</h2>
-
-                            <p>📍 Astana Sports Park</p>
-                            <p>🕕 15:00 – 17:00</p>
-                            <p>👥 18 students joined</p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="event-card-bottom">
-
-                        <span>Organized by AITU Sports Club</span>
-
-                        <button class="primary-button">
-                            Join Event
-                        </button>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PAGE: CITY GUIDES
-        ================================================== -->
-
-        <section class="page" id="page-guides">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">LOCAL KNOWLEDGE</span>
-
-                    <h1>Explore Astana</h1>
-
-                    <p>
-                        Everything you need to feel comfortable in your new city.
-                    </p>
-                </div>
-
-                <select class="city-selector">
-                    <option>Astana, Kazakhstan</option>
-                    <option>Almaty, Kazakhstan</option>
-                    <option>Shymkent, Kazakhstan</option>
-                </select>
-
-            </div>
-
-
-            <div class="guide-hero">
-
-                <div>
-
-                    <span class="eyebrow">
-                        YOUR NEW CITY
-                    </span>
-
-                    <h2>
-                        Welcome to Astana
-                    </h2>
-
-                    <p>
-                        A quick guide to transportation, student life,
-                        practical information and local culture.
-                    </p>
-
-                </div>
-
-                <div class="guide-illustration">
-                    🏙️
-                </div>
-
-            </div>
-
-
-            <div class="guide-grid">
-
-                <article class="guide-card">
-
-                    <div class="guide-icon">
-                        🚌
-                    </div>
-
-                    <h3>Getting Around</h3>
-
-                    <p>
-                        Public transport, taxi apps and useful routes.
-                    </p>
-
-                    <button class="text-button">
-                        Explore →
-                    </button>
-
-                </article>
-
-
-                <article class="guide-card">
-
-                    <div class="guide-icon">
-                        ☕
-                    </div>
-
-                    <h3>Student Life</h3>
-
-                    <p>
-                        Cafes, libraries, study spaces and affordable places.
-                    </p>
-
-                    <button class="text-button">
-                        Explore →
-                    </button>
-
-                </article>
-
-
-                <article class="guide-card">
-
-                    <div class="guide-icon">
-                        📱
-                    </div>
-
-                    <h3>Practical Information</h3>
-
-                    <p>
-                        SIM cards, banking, registration and emergency contacts.
-                    </p>
-
-                    <button class="text-button">
-                        Explore →
-                    </button>
-
-                </article>
-
-
-                <article class="guide-card">
-
-                    <div class="guide-icon">
-                        🌏
-                    </div>
-
-                    <h3>Culture & Etiquette</h3>
-
-                    <p>
-                        Local customs, useful phrases and cultural tips.
-                    </p>
-
-                    <button class="text-button">
-                        Explore →
-                    </button>
-
-                </article>
-
-            </div>
-
-
-            <div class="popular-places">
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>Popular student places</h2>
-                        <p>Places students recommend</p>
-                    </div>
-
-                </div>
-
-
-                <div class="places-grid">
-
-                    <article class="place-card">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80"
-                            alt="Coffee shop"
-                        >
-
-                        <div>
-                            <h3>Student Coffee Spots</h3>
-                            <p>☕ 12 recommended places</p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="place-card">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1564399579883-451a5d44ec08?auto=format&fit=crop&w=800&q=80"
-                            alt="Library"
-                        >
-
-                        <div>
-                            <h3>Study Spaces</h3>
-                            <p>📚 8 quiet places</p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="place-card">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80"
-                            alt="Shopping"
-                        >
-
-                        <div>
-                            <h3>Shopping</h3>
-                            <p>🛍️ Student-friendly options</p>
-                        </div>
-
-                    </article>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PAGE: MESSAGES
-        ================================================== -->
-
-        <section class="page" id="page-messages">
-
-            <div class="messages-page">
-
-                <div class="messages-list">
-
-                    <div class="messages-header">
-
-                        <h1>Messages</h1>
-
-                        <button class="icon-button">
-                            ✎
-                        </button>
-
-                    </div>
-
-                    <div class="message-search">
-                        🔎
-                        <input type="text" placeholder="Search messages">
-                    </div>
-
-
-                    <div class="conversation active">
-
-                        <img
-                            src="https://i.pravatar.cc/100?img=47"
-                            alt="Amina"
-                        >
-
-                        <div>
-
-                            <div class="conversation-top">
-                                <strong>Amina</strong>
-                                <small>12:42</small>
-                            </div>
-
-                            <p>
-                                Would you like to visit the apartment tomorrow?
-                            </p>
-
-                        </div>
-
-                        <span class="unread">2</span>
-
-                    </div>
-
-
-                    <div class="conversation">
-
-                        <img
-                            src="https://i.pravatar.cc/100?img=12"
-                            alt="Daniel"
-                        >
-
-                        <div>
-
-                            <div class="conversation-top">
-                                <strong>Daniel</strong>
-                                <small>Yesterday</small>
-                            </div>
-
-                            <p>
-                                Hey! Are you still looking for a roommate?
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="conversation">
-
-                        <img
-                            src="https://i.pravatar.cc/100?img=32"
-                            alt="Sara"
-                        >
-
-                        <div>
-
-                            <div class="conversation-top">
-                                <strong>Sara</strong>
-                                <small>Mon</small>
-                            </div>
-
-                            <p>
-                                Thanks for the recommendation!
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="chat-window">
-
-                    <div class="chat-header">
-
-                        <div class="chat-user">
-
-                            <img
-                                src="https://i.pravatar.cc/100?img=47"
-                                alt="Amina"
-                            >
-
-                            <div>
-                                <strong>Amina</strong>
-                                <span>94% compatible · Online</span>
-                            </div>
-
-                        </div>
-
-                        <button class="icon-button">
-                            •••
-                        </button>
-
-                    </div>
-
-
-                    <div class="chat-messages">
-
-                        <div class="chat-message received">
-                            Hey Yasmin! I saw that we're looking at the same apartment.
-                        </div>
-
-                        <div class="chat-message received">
-                            Would you like to visit it together?
-                        </div>
-
-                        <div class="chat-message sent">
-                            Yes! That sounds good 😊
-                        </div>
-
-                        <div class="chat-message sent">
-                            What time works for you?
-                        </div>
-
-                    </div>
-
-
-                    <div class="quick-questions">
-
-                        <button>
-                            What's your sleep schedule?
-                        </button>
-
-                        <button>
-                            How often do you clean?
-                        </button>
-
-                        <button>
-                            Do you have guests often?
-                        </button>
-
-                    </div>
-
-
-                    <div class="chat-input">
-
-                        <button>＋</button>
-
-                        <input
-                            type="text"
-                            placeholder="Write a message..."
-                        >
-
-                        <button class="send-button">
-                            ↑
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PAGE: PROFILE
-        ================================================== -->
-
-        <section class="page" id="page-profile">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">YOUR PROFILE</span>
-                    <h1>My Profile</h1>
-                    <p>Help others understand what it is like to live with you.</p>
-                </div>
-
-                <button class="primary-button">
-                    Edit Profile
-                </button>
-
-            </div>
-
-
-            <div class="profile-layout">
-
-                <!-- PROFILE CARD -->
-
-                <div class="profile-main-card">
-
-                    <div class="profile-cover"></div>
-
-                    <div class="profile-avatar-container">
-
-                        <img
-                            src="https://i.pravatar.cc/300?img=47"
-                            alt="Yasmin"
-                            class="profile-avatar"
-                        >
-
-                        <span class="verified-student">
-                            ✓
-                        </span>
-
-                    </div>
-
-
-                    <div class="profile-details">
-
-                        <h2>Yasmin Aipanova</h2>
-
-                        <p class="profile-location">
-                            📍 Astana, Kazakhstan
-                        </p>
-
-                        <p>
-                            IT Management · Astana IT University
-                        </p>
-
-                        <p>
-                            3rd year student
-                        </p>
-
-                        <div class="profile-tags">
-
-                            <span>🌍 International Student</span>
-                            <span>💻 Technology</span>
-                            <span>✈️ Travel</span>
-                            <span>☕ Cafes</span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- LIFESTYLE -->
-
-                <div class="lifestyle-card">
-
-                    <div class="section-header">
-
-                        <div>
-                            <h2>Living Compatibility</h2>
-                            <p>Your lifestyle profile</p>
-                        </div>
-
-                        <button class="text-button">
-                            Edit
-                        </button>
-
-                    </div>
-
-
-                    <div class="lifestyle-list">
-
-                        <div class="lifestyle-row">
-
-                            <span>✨ Cleanliness</span>
-
-                            <strong>Very important</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🌙 Sleep schedule</span>
-
-                            <strong>Night owl</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🔊 Noise</span>
-
-                            <strong>Moderate</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>👥 Guests</span>
-
-                            <strong>Occasionally</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🚭 Smoking</span>
-
-                            <strong>Non-smoker</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🍳 Cooking</span>
-
-                            <strong>Sometimes</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🧘 Social lifestyle</span>
-
-                            <strong>Balanced</strong>
-
-                        </div>
-
-
-                        <div class="lifestyle-row">
-
-                            <span>🔐 Privacy</span>
-
-                            <strong>Personal space</strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ABOUT -->
-
-                <div class="profile-info-card">
-
-                    <h2>About me</h2>
-
-                    <p>
-                        I'm an IT Management student who enjoys travelling,
-                        meeting new people and exploring new cities.
-                        I value a clean and respectful living environment.
-                    </p>
-
-                </div>
-
-
-                <!-- VERIFICATION -->
-
-                <div class="profile-info-card">
-
-                    <h2>Verification</h2>
-
-                    <div class="verification-items">
-
-                        <div>
-                            <span>✓</span>
-                            University email verified
-                        </div>
-
-                        <div>
-                            <span>✓</span>
-                            Student identity verified
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PAGE: SAVED
-        ================================================== -->
-
-        <section class="page" id="page-saved">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">YOUR SAVED ITEMS</span>
-                    <h1>Saved</h1>
-                    <p>Apartments and people you want to remember.</p>
-                </div>
-
-            </div>
-
-
-            <div class="saved-tabs">
-
-                <button class="active">
-                    Apartments
-                </button>
-
-                <button>
-                    Roommates
-                </button>
-
-                <button>
-                    Events
-                </button>
-
-            </div>
-
-
-            <div class="apartment-grid">
-
-                <article class="apartment-card">
-
-                    <div class="apartment-image">
-
-                        <img
-                            src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
-                            alt="Saved apartment"
-                        >
-
-                        <span class="verified-badge">
-                            ✓ Verified
-                        </span>
-
-                        <button class="save-button saved">
-                            ♥
-                        </button>
-
-                    </div>
-
-                    <div class="apartment-info">
-
-                        <div class="card-location">
-                            📍 Astana · Central district
-                        </div>
-
-                        <h3>Modern Shared Apartment</h3>
-
-                        <div class="price">
-                            ₸110,000 <span>/ month</span>
-                        </div>
-
-                        <div class="apartment-details">
-                            <span>3 bedrooms</span>
-                            <span>1 bathroom</span>
-                            <span>Wi-Fi</span>
-                        </div>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             MOBILE BOTTOM NAVIGATION
-        ================================================== -->
-
-        <nav class="mobile-bottom-nav">
-
-            <a href="#home" data-page="home" class="mobile-nav-item active">
-                <span>⌂</span>
-                <small>Home</small>
-            </a>
-
-            <a href="#housing" data-page="housing" class="mobile-nav-item">
-                <span>🏠</span>
-                <small>Housing</small>
-            </a>
-
-            <a href="#roommates" data-page="roommates" class="mobile-nav-item">
-                <span>👥</span>
-                <small>Roommates</small>
-            </a>
-
-            <a href="#community" data-page="community" class="mobile-nav-item">
-                <span>💬</span>
-                <small>Community</small>
-            </a>
-
-            <a href="#profile" data-page="profile" class="mobile-nav-item">
-                <span>◯</span>
-                <small>Profile</small>
-            </a>
-
-        </nav>
-
-
-    </main>
+  </section>
 
 </div>
 
 
-<!-- =====================================================
-     MOBILE SIDEBAR OVERLAY
-===================================================== -->
+<!-- MOBILE NAV -->
 
-<div class="mobile-overlay" id="mobileOverlay"></div>
+<nav class="mobile-nav">
+
+  <button class="active" data-page="home">
+    <span>⌂</span>
+    Home
+  </button>
+
+  <button data-page="housing">
+    <span>🏠</span>
+    Housing
+  </button>
+
+  <button data-page="roommates">
+    <span>👥</span>
+    Roommates
+  </button>
+
+  <button data-page="community">
+    <span>💬</span>
+    Community
+  </button>
+
+  <button data-page="profile">
+    <span>◯</span>
+    Profile
+  </button>
+
+</nav>
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
+<script>
 
-<script src="script.js"></script>
+  const pages = document.querySelectorAll(".page");
+  const navigationButtons = document.querySelectorAll("[data-page]");
+
+  function showPage(pageName) {
+
+    pages.forEach(page => {
+      page.classList.remove("active");
+    });
+
+    const selectedPage =
+      document.getElementById(`page-${pageName}`);
+
+    if (selectedPage) {
+      selectedPage.classList.add("active");
+    }
+
+    document
+      .querySelectorAll(".nav-link, .mobile-nav button")
+      .forEach(button => {
+        button.classList.remove("active");
+      });
+
+    document
+      .querySelectorAll(`[data-page="${pageName}"]`)
+      .forEach(button => {
+        button.classList.add("active");
+      });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    window.location.hash = pageName;
+  }
+
+
+  navigationButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const pageName =
+        button.getAttribute("data-page");
+
+      showPage(pageName);
+
+    });
+
+  });
+
+
+  function sendMessage() {
+
+    const input =
+      document.getElementById("messageInput");
+
+    const message =
+      input.value.trim();
+
+    if (!message) return;
+
+    const chatBody =
+      document.querySelector(".chat-body");
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.className =
+      "bubble mine";
+
+    bubble.textContent =
+      message;
+
+    chatBody.appendChild(bubble);
+
+    input.value = "";
+
+  }
+
+
+  function saveProfile() {
+
+    alert(
+      "Lifestyle Profile created! Your roommate recommendations have been updated."
+    );
+
+    showPage("profile");
+
+  }
+
+
+  window.addEventListener("load", () => {
+
+    const hash =
+      window.location.hash.replace("#", "");
+
+    if (
+      hash &&
+      document.getElementById(`page-${hash}`)
+    ) {
+      showPage(hash);
+    }
+
+  });
+
+</script>
 
 </body>
 </html>
