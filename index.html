@@ -1,3399 +1,897 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>GlobalStudent Hub</title>
-
-  <meta
-    name="description"
-    content="GlobalStudent Hub helps students find verified housing, compatible roommates, local guidance and student communities."
-  >
-
-  <style>
-    /* =========================================================
-       GLOBALSTUDENT HUB
-       SINGLE-FILE MVP
-       ========================================================= */
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #625df5;
-      --primary-dark: #4d49d5;
-      --primary-light: #efefff;
-
-      --secondary: #8c84ff;
-
-      --success: #17a66b;
-      --success-light: #e9faf2;
-
-      --warning: #e89a31;
-      --warning-light: #fff5e7;
-
-      --danger: #df5c63;
-      --danger-light: #fff0f1;
-
-      --text: #18192b;
-      --muted: #6e7285;
-      --soft: #9296a8;
-
-      --background: #f7f8fc;
-      --surface: #ffffff;
-      --surface-soft: #f1f2f7;
-
-      --border: #e5e6ee;
-
-      --shadow:
-        0 14px 38px rgba(32, 34, 67, 0.08);
-
-      --shadow-small:
-        0 6px 18px rgba(32, 34, 67, 0.06);
-
-      --radius: 22px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-      background: var(--background);
-      color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .app {
-      min-height: 100vh;
-    }
-
-    .container {
-      width: min(1180px, 92%);
-      margin: 0 auto;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-      animation: fadePage 0.3s ease;
-    }
-
-    @keyframes fadePage {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* =========================================================
-       HEADER
-       ========================================================= */
-
-    .desktop-header {
-      height: 76px;
-      display: flex;
-      align-items: center;
-
-      position: sticky;
-      top: 0;
-
-      z-index: 1000;
-
-      background:
-        rgba(255, 255, 255, 0.94);
-
-      backdrop-filter: blur(16px);
-
-      border-bottom:
-        1px solid var(--border);
-    }
-
-    .desktop-header-inner {
-      width: min(1280px, 94%);
-      margin: auto;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 28px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-
-      font-size: 20px;
-      font-weight: 850;
-      white-space: nowrap;
-    }
-
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 14px;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          #8580ff
-        );
-
-      color: white;
-
-      font-weight: 900;
-
-      box-shadow:
-        0 8px 22px
-        rgba(98, 93, 245, 0.24);
-    }
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-    }
-
-    .nav-link {
-      border: 0;
-      background: transparent;
-
-      position: relative;
-
-      padding: 10px 2px;
-
-      color: var(--muted);
-
-      font-size: 14px;
-      font-weight: 650;
-    }
-
-    .nav-link::after {
-      content: "";
-
-      position: absolute;
-
-      bottom: 3px;
-      left: 50%;
-
-      width: 0;
-      height: 2px;
-
-      background: var(--primary);
-
-      transform: translateX(-50%);
-
-      transition: 0.2s;
-    }
-
-    .nav-link:hover,
-    .nav-link.active {
-      color: var(--primary);
-    }
-
-    .nav-link.active::after {
-      width: 100%;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-
-      border-radius: 50%;
-
-      display: grid;
-      place-items: center;
-
-      border: 0;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          #9588ff
-        );
-
-      color: white;
-
-      font-weight: 850;
-    }
-
-    /* =========================================================
-       BUTTONS
-       ========================================================= */
-
-    .btn {
-      border: 0;
-
-      min-height: 42px;
-
-      padding: 11px 18px;
-
-      border-radius: 12px;
-
-      font-size: 14px;
-      font-weight: 750;
-
-      transition:
-        transform 0.2s,
-        box-shadow 0.2s,
-        background 0.2s;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      color: white;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          #7772ff
-        );
-
-      box-shadow:
-        0 8px 20px
-        rgba(98, 93, 245, 0.18);
-    }
-
-    .btn-primary:hover {
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary-dark),
-          #625df5
-        );
-    }
-
-    .btn-secondary {
-      color: var(--primary);
-
-      background: var(--primary-light);
-    }
-
-    .btn-outline {
-      color: var(--text);
-
-      background: white;
-
-      border:
-        1px solid var(--border);
-    }
-
-    .btn-danger {
-      color: var(--danger);
-
-      background:
-        var(--danger-light);
-    }
-
-    .btn-small {
-      min-height: 34px;
-
-      padding: 8px 12px;
-
-      font-size: 12px;
-    }
-
-    /* =========================================================
-       COMMON
-       ========================================================= */
-
-    .section {
-      padding: 46px 0 80px;
-    }
-
-    .section-title {
-      margin-bottom: 7px;
-
-      font-size:
-        clamp(28px, 4vw, 38px);
-
-      letter-spacing: -0.8px;
-    }
-
-    .section-subtitle {
-      max-width: 720px;
-
-      margin-bottom: 28px;
-
-      color: var(--muted);
-    }
-
-    .row-between {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 16px;
-    }
-
-    .grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
-      gap: 20px;
-    }
-
-    .grid-2 {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, 1fr);
-
-      gap: 20px;
-    }
-
-    .card {
-      overflow: hidden;
-
-      background: white;
-
-      border:
-        1px solid var(--border);
-
-      border-radius:
-        var(--radius);
-
-      box-shadow:
-        0 5px 18px
-        rgba(30, 32, 65, 0.035);
-
-      transition:
-        transform 0.2s,
-        box-shadow 0.2s,
-        border 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-
-      border-color: #d7d8e6;
-
-      box-shadow: var(--shadow-small);
-    }
-
-    .card-body {
-      padding: 20px;
-    }
-
-    .card h3 {
-      margin-bottom: 6px;
-    }
-
-    .card p {
-      color: var(--muted);
-
-      font-size: 14px;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-
-      gap: 7px;
-
-      margin: 13px 0;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-
-      padding: 6px 10px;
-
-      border-radius: 100px;
-
-      background: #f0f1f6;
-
-      color: #565a6d;
-
-      font-size: 11px;
-      font-weight: 750;
-    }
-
-    .badge-primary {
-      color: var(--primary);
-
-      background: var(--primary-light);
-    }
-
-    .badge-success {
-      color: var(--success);
-
-      background: var(--success-light);
-    }
-
-    .badge-warning {
-      color: #a46917;
-
-      background: var(--warning-light);
-    }
-
-    .empty-state {
-      padding: 40px;
-
-      text-align: center;
-
-      color: var(--muted);
-    }
-
-    /* =========================================================
-       HERO
-       ========================================================= */
-
-    .hero {
-      min-height: 650px;
-
-      display: grid;
-
-      grid-template-columns:
-        1.05fr 0.95fr;
-
-      align-items: center;
-
-      gap: 62px;
-
-      padding: 65px 0 45px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-
-      margin-bottom: 18px;
-
-      padding: 8px 14px;
-
-      border-radius: 100px;
-
-      color: var(--primary);
-
-      background: var(--primary-light);
-
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .hero h1 {
-      max-width: 700px;
-
-      margin-bottom: 22px;
-
-      font-size:
-        clamp(46px, 5.8vw, 74px);
-
-      line-height: 1.02;
-
-      letter-spacing: -3px;
-    }
-
-    .hero-highlight {
-      color: var(--primary);
-    }
-
-    .hero p {
-      max-width: 620px;
-
-      margin-bottom: 30px;
-
-      color: var(--muted);
-
-      font-size: 18px;
-      line-height: 1.7;
-    }
-
-    .hero-buttons {
-      display: flex;
-      flex-wrap: wrap;
-
-      gap: 12px;
-    }
-
-    .hero-visual {
-      min-height: 460px;
-
-      position: relative;
-
-      overflow: hidden;
-
-      border-radius: 38px;
-
-      background:
-        radial-gradient(
-          circle at 90% 15%,
-          rgba(143, 134, 255, 0.58),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at 10% 90%,
-          rgba(109, 225, 196, 0.31),
-          transparent 32%
-        ),
-        linear-gradient(
-          145deg,
-          #e8e9ff,
-          #ffffff
-        );
-
-      box-shadow: var(--shadow);
-    }
-
-    .hero-house-card {
-      width: 74%;
-
-      position: absolute;
-
-      left: 28px;
-      top: 38px;
-
-      padding: 16px;
-
-      border-radius: 20px;
-
-      background:
-        rgba(255, 255, 255, 0.96);
-
-      box-shadow: var(--shadow);
-    }
-
-    .hero-house-image {
-      height: 175px;
-
-      margin-bottom: 13px;
-
-      border-radius: 15px;
-
-      background:
-        url("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=85")
-        center / cover no-repeat;
-    }
-
-    .hero-roommate {
-      width: 220px;
-
-      position: absolute;
-
-      right: 20px;
-      bottom: 38px;
-
-      padding: 18px;
-
-      border-radius: 20px;
-
-      background: white;
-
-      box-shadow: var(--shadow);
-    }
-
-    .hero-match-score {
-      margin: 4px 0;
-
-      color: var(--success);
-
-      font-size: 23px;
-      font-weight: 900;
-    }
-
-    /* =========================================================
-       TRUST STRIP
-       ========================================================= */
-
-    .trust-strip {
-      display: grid;
-
-      grid-template-columns:
-        repeat(4, 1fr);
-
-      gap: 14px;
-
-      margin-bottom: 60px;
-    }
-
-    .trust-card {
-      padding: 21px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 18px;
-
-      background: white;
-    }
-
-    .trust-card strong {
-      display: block;
-
-      margin-bottom: 4px;
-
-      font-size: 25px;
-    }
-
-    .trust-card span {
-      color: var(--muted);
-
-      font-size: 13px;
-    }
-
-    /* =========================================================
-       DASHBOARD
-       ========================================================= */
-
-    .dashboard-welcome {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      gap: 22px;
-
-      margin-bottom: 26px;
-
-      padding: 32px;
-
-      border-radius: 28px;
-
-      color: white;
-
-      background:
-        radial-gradient(
-          circle at right top,
-          rgba(255, 255, 255, 0.2),
-          transparent 36%
-        ),
-        linear-gradient(
-          120deg,
-          #5652db,
-          #7975ff
-        );
-    }
-
-    .dashboard-welcome h2 {
-      margin-bottom: 6px;
-
-      font-size: 31px;
-    }
-
-    .dashboard-welcome p {
-      color:
-        rgba(255,255,255,.82);
-    }
-
-    .progress-panel {
-      min-width: 260px;
-
-      padding: 17px;
-
-      border-radius: 17px;
-
-      background:
-        rgba(255,255,255,.13);
-    }
-
-    .progress-track {
-      height: 8px;
-
-      margin: 10px 0;
-
-      overflow: hidden;
-
-      border-radius: 100px;
-
-      background:
-        rgba(255,255,255,.22);
-    }
-
-    .progress-fill {
-      width: 85%;
-      height: 100%;
-
-      background: white;
-    }
-
-    .dashboard-shortcut {
-      padding: 23px;
-    }
-
-    .dashboard-shortcut-icon {
-      margin-bottom: 12px;
-
-      font-size: 31px;
-    }
-
-    /* =========================================================
-       JOURNEY
-       ========================================================= */
-
-    .journey {
-      margin-top: 70px;
-
-      padding: 35px;
-
-      border-radius: 28px;
-
-      background: white;
-
-      border:
-        1px solid var(--border);
-    }
-
-    .journey-track {
-      display: flex;
-      align-items: center;
-
-      gap: 10px;
-
-      overflow-x: auto;
-
-      margin-top: 25px;
-
-      padding-bottom: 8px;
-    }
-
-    .journey-step {
-      min-width: 145px;
-
-      padding: 16px;
-
-      border-radius: 15px;
-
-      background:
-        var(--surface-soft);
-
-      text-align: center;
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .journey-arrow {
-      color: var(--soft);
-
-      font-size: 18px;
-    }
-
-    /* =========================================================
-       FORMS
-       ========================================================= */
-
-    .form-card {
-      padding: 28px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 25px;
-
-      background: white;
-    }
-
-    .form-section {
-      margin-bottom: 32px;
-    }
-
-    .form-section h3 {
-      margin-bottom: 17px;
-    }
-
-    .form-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, 1fr);
-
-      gap: 16px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-
-      gap: 7px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-
-      min-height: 44px;
-
-      padding: 11px 13px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 11px;
-
-      outline: none;
-
-      background: #fbfbfe;
-
-      color: var(--text);
-    }
-
-    .field textarea {
-      min-height: 110px;
-
-      resize: vertical;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--primary);
-
-      background: white;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(98, 93, 245, 0.08);
-    }
-
-    /* =========================================================
-       HOUSING
-       ========================================================= */
-
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-
-      gap: 10px;
-
-      margin-bottom: 23px;
-
-      padding: 14px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 19px;
-
-      background: white;
-    }
-
-    .filter-bar input,
-    .filter-bar select {
-      min-height: 42px;
-
-      padding: 10px 12px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 11px;
-
-      outline: none;
-
-      background: #fbfbfe;
-    }
-
-    .filter-check {
-      display: flex;
-      align-items: center;
-
-      gap: 7px;
-
-      color: var(--muted);
-
-      font-size: 13px;
-    }
-
-    .view-toggle {
-      display: flex;
-
-      gap: 7px;
-
-      margin-left: auto;
-    }
-
-    .view-toggle button.active {
-      color: white;
-
-      background: var(--primary);
-    }
-
-    .listing-image {
-      width: 100%;
-      height: 215px;
-
-      object-fit: cover;
-    }
-
-    .listing-price {
-      margin: 11px 0 5px;
-
-      font-size: 21px;
-      font-weight: 900;
-    }
-
-    .heart {
-      cursor: pointer;
-
-      font-size: 23px;
-
-      user-select: none;
-    }
-
-    .housing-map {
-      min-height: 560px;
-
-      display: none;
-
-      position: relative;
-
-      overflow: hidden;
-
-      border-radius: 25px;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent 49%,
-          rgba(255,255,255,.65) 50%,
-          transparent 51%
-        ),
-        linear-gradient(
-          transparent 49%,
-          rgba(255,255,255,.65) 50%,
-          transparent 51%
-        ),
-        #dfe9e5;
-
-      background-size:
-        90px 90px,
-        90px 90px;
-
-      border:
-        1px solid var(--border);
-    }
-
-    .map-road {
-      position: absolute;
-
-      background:
-        rgba(255,255,255,.75);
-
-      border-radius: 100px;
-    }
-
-    .map-road.one {
-      width: 800px;
-      height: 28px;
-
-      top: 45%;
-      left: -120px;
-
-      transform: rotate(-18deg);
-    }
-
-    .map-road.two {
-      width: 28px;
-      height: 750px;
-
-      left: 55%;
-      top: -100px;
-
-      transform: rotate(12deg);
-    }
-
-    .map-pin {
-      position: absolute;
-
-      width: 44px;
-      height: 44px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius:
-        50% 50% 50% 0;
-
-      transform: rotate(-45deg);
-
-      color: white;
-
-      background: var(--primary);
-
-      box-shadow:
-        0 8px 18px
-        rgba(50, 50, 90, .18);
-    }
-
-    .map-pin span {
-      transform: rotate(45deg);
-
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    /* =========================================================
-       ROOMMATES
-       ========================================================= */
-
-    .roommate-card {
-      padding: 21px;
-    }
-
-    .roommate-top {
-      display: flex;
-      align-items: center;
-
-      gap: 13px;
-
-      margin-bottom: 16px;
-    }
-
-    .roommate-photo {
-      width: 67px;
-      height: 67px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      border:
-        3px solid var(--primary-light);
-    }
-
-    .match-score {
-      margin-left: auto;
-
-      padding: 8px 11px;
-
-      border-radius: 12px;
-
-      color: var(--success);
-
-      background:
-        var(--success-light);
-
-      font-weight: 900;
-    }
-
-    .match-points {
-      margin: 14px 0;
-
-      font-size: 13px;
-      line-height: 1.9;
-    }
-
-    .match-good {
-      color: #267b5c;
-    }
-
-    .match-diff {
-      color: #9d681a;
-    }
-
-    .action-row {
-      display: flex;
-      flex-wrap: wrap;
-
-      gap: 7px;
-    }
-
-    /* =========================================================
-       COMMUNITY
-       ========================================================= */
-
-    .category-row {
-      display: flex;
-      flex-wrap: wrap;
-
-      gap: 8px;
-
-      margin-bottom: 25px;
-    }
-
-    .category-button {
-      padding: 8px 12px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 100px;
-
-      background: white;
-
-      color: var(--muted);
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .category-button.active {
-      border-color:
-        var(--primary-light);
-
-      color: var(--primary);
-
-      background:
-        var(--primary-light);
-    }
-
-    .community-post {
-      padding: 22px;
-    }
-
-    .post-author {
-      display: flex;
-      align-items: center;
-
-      gap: 10px;
-
-      margin-bottom: 14px;
-    }
-
-    .small-avatar {
-      width: 43px;
-      height: 43px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-    }
-
-    .post-body {
-      margin-bottom: 15px;
-
-      color: var(--text) !important;
-
-      font-size: 15px !important;
-
-      line-height: 1.65;
-    }
-
-    .post-actions {
-      display: flex;
-
-      gap: 18px;
-
-      color: var(--muted);
-
-      font-size: 12px;
-    }
-
-    .post-actions button {
-      border: 0;
-
-      background: transparent;
-
-      color: inherit;
-    }
-
-    /* =========================================================
-       GUIDES
-       ========================================================= */
-
-    .guide-hero {
-      margin-bottom: 28px;
-
-      padding: 30px;
-
-      border-radius: 26px;
-
-      color: white;
-
-      background:
-        linear-gradient(
-          110deg,
-          rgba(52, 49, 180, .92),
-          rgba(98, 93, 245, .88)
-        ),
-        url("https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1400&q=80")
-        center / cover;
-    }
-
-    .guide-hero h2 {
-      margin-bottom: 7px;
-
-      font-size: 32px;
-    }
-
-    .guide-card {
-      padding: 23px;
-    }
-
-    .guide-icon {
-      margin-bottom: 12px;
-
-      font-size: 32px;
-    }
-
-    /* =========================================================
-       EVENTS
-       ========================================================= */
-
-    .event-card {
-      display: flex;
-
-      gap: 16px;
-
-      padding: 20px;
-    }
-
-    .event-date {
-      width: 62px;
-      height: 68px;
-
-      flex-shrink: 0;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 15px;
-
-      text-align: center;
-
-      color: var(--primary);
-
-      background:
-        var(--primary-light);
-
-      font-size: 13px;
-      font-weight: 900;
-
-      line-height: 1.1;
-    }
-
-    /* =========================================================
-       MESSAGES
-       ========================================================= */
-
-    .messages-layout {
-      min-height: 580px;
-
-      display: grid;
-
-      grid-template-columns:
-        320px 1fr;
-
-      overflow: hidden;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 25px;
-
-      background: white;
-    }
-
-    .conversation-list {
-      padding: 13px;
-
-      border-right:
-        1px solid var(--border);
-
-      background: #fcfcfe;
-    }
-
-    .conversation {
-      display: flex;
-      align-items: center;
-
-      gap: 10px;
-
-      padding: 13px;
-
-      border-radius: 14px;
-
-      cursor: pointer;
-    }
-
-    .conversation:hover,
-    .conversation.active {
-      background:
-        var(--primary-light);
-    }
-
-    .conversation p {
-      color: var(--muted);
-
-      font-size: 11px;
-    }
-
-    .chat {
-      display: flex;
-      flex-direction: column;
-
-      min-width: 0;
-    }
-
-    .chat-header {
-      padding: 18px;
-
-      border-bottom:
-        1px solid var(--border);
-
-      font-weight: 800;
-    }
-
-    .chat-body {
-      flex: 1;
-
-      padding: 22px;
-
-      overflow-y: auto;
-
-      background:
-        linear-gradient(
-          #fdfdff,
-          #fafafe
-        );
-    }
-
-    .bubble {
-      max-width: 70%;
-
-      margin-bottom: 10px;
-
-      padding: 12px 15px;
-
-      border-radius:
-        16px 16px 16px 5px;
-
-      background: #eceef4;
-
-      font-size: 14px;
-    }
-
-    .bubble.mine {
-      margin-left: auto;
-
-      border-radius:
-        16px 16px 5px 16px;
-
-      color: white;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          #7772ff
-        );
-    }
-
-    .quick-questions {
-      display: flex;
-      flex-wrap: wrap;
-
-      gap: 6px;
-
-      padding: 10px 15px;
-
-      border-top:
-        1px solid #f0f1f5;
-    }
-
-    .quick-question {
-      padding: 7px 10px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 100px;
-
-      color: var(--muted);
-
-      background: white;
-
-      font-size: 11px;
-    }
-
-    .message-input {
-      display: flex;
-
-      gap: 8px;
-
-      padding: 15px;
-
-      border-top:
-        1px solid var(--border);
-    }
-
-    .message-input input {
-      flex: 1;
-
-      min-width: 0;
-
-      padding: 11px 13px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 11px;
-
-      outline: none;
-    }
-
-    /* =========================================================
-       PROFILE
-       ========================================================= */
-
-    .profile-header {
-      display: flex;
-      align-items: center;
-
-      gap: 23px;
-
-      margin-bottom: 22px;
-
-      padding: 28px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 27px;
-
-      background: white;
-    }
-
-    .profile-photo {
-      width: 105px;
-      height: 105px;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      border:
-        4px solid var(--primary-light);
-    }
-
-    .profile-main-info {
-      flex: 1;
-    }
-
-    .profile-main-info h2 {
-      margin-bottom: 4px;
-    }
-
-    .profile-main-info p {
-      color: var(--muted);
-    }
-
-    .verification-line {
-      margin-top: 11px;
-
-      color: var(--primary);
-
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .profile-grid {
-      display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap: 20px;
-    }
-
-    .profile-box {
-      padding: 23px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 22px;
-
-      background: white;
-    }
-
-    .profile-box h3 {
-      margin-bottom: 15px;
-    }
-
-    .profile-box p {
-      color: var(--muted);
-
-      line-height: 1.7;
-    }
-
-    .compat-row {
-      display: flex;
-      justify-content: space-between;
-
-      gap: 12px;
-
-      padding: 11px 0;
-
-      border-bottom:
-        1px solid var(--border);
-
-      font-size: 13px;
-    }
-
-    .compat-row:last-child {
-      border-bottom: 0;
-    }
-
-    /* =========================================================
-       SAFETY
-       ========================================================= */
-
-    .safety-hero {
-      margin-bottom: 26px;
-
-      padding: 31px;
-
-      border-radius: 27px;
-
-      color: white;
-
-      background:
-        linear-gradient(
-          120deg,
-          #126b59,
-          #21a679
-        );
-    }
-
-    .safety-hero h2 {
-      margin-bottom: 8px;
-
-      font-size: 31px;
-    }
-
-    .safety-card {
-      padding: 22px;
-    }
-
-    .safety-icon {
-      margin-bottom: 11px;
-
-      font-size: 30px;
-    }
-
-    /* =========================================================
-       MODALS
-       ========================================================= */
-
-    .modal-overlay {
-      position: fixed;
-
-      inset: 0;
-
-      z-index: 5000;
-
-      display: none;
-      place-items: center;
-
-      padding: 20px;
-
-      background:
-        rgba(22, 22, 40, .56);
-    }
-
-    .modal-overlay.open {
-      display: grid;
-    }
-
-    .modal {
-      width:
-        min(620px, 100%);
-
-      max-height: 90vh;
-
-      overflow-y: auto;
-
-      position: relative;
-
-      padding: 28px;
-
-      border-radius: 25px;
-
-      background: white;
-
-      box-shadow:
-        0 25px 70px
-        rgba(12, 12, 30, .25);
-    }
-
-    .modal-close {
-      position: absolute;
-
-      right: 18px;
-      top: 13px;
-
-      border: 0;
-
-      background: transparent;
-
-      font-size: 28px;
-    }
-
-    .modal-title {
-      margin-bottom: 7px;
-
-      font-size: 26px;
-    }
-
-    .modal-subtitle {
-      margin-bottom: 22px;
-
-      color: var(--muted);
-
-      font-size: 14px;
-    }
-
-    /* =========================================================
-       TOAST
-       ========================================================= */
-
-    .toast {
-      position: fixed;
-
-      right: 24px;
-      top: 90px;
-
-      z-index: 10000;
-
-      max-width: 330px;
-
-      padding: 14px 17px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 13px;
-
-      color: var(--text);
-
-      background: white;
-
-      font-size: 13px;
-      font-weight: 700;
-
-      box-shadow: var(--shadow);
-
-      opacity: 0;
-      pointer-events: none;
-
-      transform:
-        translateY(-10px);
-
-      transition: .25s;
-    }
-
-    .toast.show {
-      opacity: 1;
-
-      transform:
-        translateY(0);
-    }
-
-    /* =========================================================
-       MOBILE BOTTOM NAV
-       ========================================================= */
-
-    .mobile-nav {
-      display: none;
-    }
-
-    /* =========================================================
-       TABLET
-       ========================================================= */
-
-    @media (max-width: 1050px) {
-
-      .desktop-nav {
-        gap: 12px;
-      }
-
-      .nav-link {
-        font-size: 12px;
-      }
-
-      .hero {
-        gap: 36px;
-      }
-
-      .grid {
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
-
-      .trust-strip {
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
-    }
-
-    /* =========================================================
-       MOBILE
-       ========================================================= */
-
-    @media (max-width: 820px) {
-
-      body {
-        padding-bottom: 75px;
-      }
-
-      .desktop-header {
-        height: 68px;
-      }
-
-      .desktop-header-inner {
-        width: calc(100% - 30px);
-      }
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .header-actions .btn {
-        display: none;
-      }
-
-      .brand {
-        font-size: 18px;
-      }
-
-      .brand-logo {
-        width: 38px;
-        height: 38px;
-      }
-
-      .container {
-        width: calc(100% - 30px);
-      }
-
-      .section {
-        padding: 34px 0 60px;
-      }
-
-      .hero {
-        min-height: auto;
-
-        grid-template-columns: 1fr;
-
-        gap: 35px;
-
-        padding: 42px 0;
-      }
-
-      .hero h1 {
-        font-size:
-          clamp(42px, 12vw, 58px);
-
-        letter-spacing: -2px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .hero-visual {
-        min-height: 405px;
-
-        border-radius: 28px;
-      }
-
-      .hero-house-card {
-        left: 18px;
-        top: 24px;
-
-        width: 78%;
-      }
-
-      .hero-house-image {
-        height: 145px;
-      }
-
-      .hero-roommate {
-        right: 14px;
-        bottom: 24px;
-
-        width: 195px;
-      }
-
-      .grid,
-      .grid-2,
-      .profile-grid,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .dashboard-welcome {
-        align-items: flex-start;
-        flex-direction: column;
-
-        padding: 26px;
-      }
-
-      .progress-panel {
-        width: 100%;
-        min-width: 0;
-      }
-
-      .filter-bar {
-        display: grid;
-
-        grid-template-columns:
-          1fr 1fr;
-      }
-
-      .filter-bar input,
-      .filter-bar select {
-        width: 100%;
-      }
-
-      .view-toggle {
-        margin-left: 0;
-      }
-
-      .messages-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .conversation-list {
-        display: none;
-      }
-
-      .profile-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .profile-header .btn {
-        width: 100%;
-      }
-
-      .mobile-nav {
-        display: grid;
-
-        grid-template-columns:
-          repeat(5, 1fr);
-
-        position: fixed;
-
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        z-index: 2000;
-
-        min-height: 68px;
-
-        padding:
-          5px 5px
-          calc(5px + env(safe-area-inset-bottom));
-
-        border-top:
-          1px solid var(--border);
-
-        background:
-          rgba(255,255,255,.96);
-
-        backdrop-filter:
-          blur(16px);
-
-        box-shadow:
-          0 -8px 25px
-          rgba(20,22,50,.07);
-      }
-
-      .mobile-nav button {
-        border: 0;
-
-        padding: 6px 2px;
-
-        background: transparent;
-
-        color: var(--soft);
-
-        font-size: 10px;
-        font-weight: 700;
-      }
-
-      .mobile-nav button span {
-        display: block;
-
-        margin-bottom: 2px;
-
-        font-size: 20px;
-      }
-
-      .mobile-nav button.active {
-        color: var(--primary);
-      }
-    }
-
-    @media (max-width: 520px) {
-
-      .hero-buttons {
-        display: grid;
-
-        grid-template-columns: 1fr;
-      }
-
-      .hero-buttons .btn {
-        width: 100%;
-      }
-
-      .trust-strip {
-        grid-template-columns:
-          1fr 1fr;
-      }
-
-      .filter-bar {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-visual {
-        min-height: 355px;
-      }
-
-      .hero-house-card {
-        width: 82%;
-      }
-
-      .hero-roommate {
-        width: 170px;
-
-        padding: 14px;
-      }
-
-      .housing-map {
-        min-height: 450px;
-      }
-
-      .event-card {
-        padding: 16px;
-      }
-
-      .event-date {
-        width: 55px;
-        height: 62px;
-      }
-
-      .modal {
-        padding: 23px 18px;
-      }
-
-      .bubble {
-        max-width: 84%;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GlobalStudent Hub — Your New City. Your Home. Your People.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F7FB; --surface:#FFFFFF; --text:#0E1220; --muted:#6B7280; --line:#E8EAF2;
+  --accent:#5B4BFF; --accent-2:#8B7BFF; --accent-soft:#EEECFF;
+  --green:#12B76A; --green-soft:#E7F8F0; --blue:#2E90FA; --blue-soft:#E8F2FE;
+  --amber:#F79009; --amber-soft:#FFF6E5;
+  --radius:20px; --radius-sm:14px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 10px 26px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 40px rgba(16,24,40,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);line-height:1.5;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;padding-bottom:86px;
+}
+@media(min-width:900px){body{padding-bottom:0}}
+h1,h2,h3,h4{margin:0;letter-spacing:-.02em;line-height:1.2}
+p{margin:0}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.accent{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;width:100%}
+.narrow{max-width:640px}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fade-in{animation:fade .32s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes slideUp{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
+
+/* ---------- HEADER ---------- */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(246,247,251,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:62px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;letter-spacing:-.03em;cursor:pointer;user-select:none}
+.logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#fff;font-size:15px;font-weight:800;box-shadow:0 6px 16px rgba(91,75,255,.32)}
+.nav-links{display:none;margin-left:auto;gap:2px}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-links button{background:none;border:0;padding:9px 13px;border-radius:11px;font-size:14px;font-weight:600;color:var(--muted);transition:.16s}
+.nav-links button:hover{background:#fff;color:var(--text)}
+.nav-links button.active{background:var(--accent-soft);color:var(--accent)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+@media(min-width:980px){.topbar-right{margin-left:10px}}
+
+/* ---------- BOTTOM NAV ---------- */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+@media(min-width:900px){.bottomnav{display:none}}
+.bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:7px 2px;border-radius:14px;color:var(--muted);font-size:10.5px;font-weight:600;transition:.16s}
+.bottomnav button svg{width:22px;height:22px}
+.bottomnav button.active{color:var(--accent);background:var(--accent-soft)}
+
+/* ---------- BUTTONS ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:14px;border:1px solid transparent;font-size:14.5px;font-weight:650;transition:.18s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 22px rgba(91,75,255,.28)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(91,75,255,.36)}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:#D6D9E8;transform:translateY(-1px)}
+.btn-soft{background:var(--accent-soft);color:var(--accent)}
+.btn-soft:hover{background:#E3E0FF}
+.btn-danger{background:#FEF0F0;color:#D92D20}
+.btn-sm{padding:9px 14px;font-size:13.5px;border-radius:12px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ---------- CARDS / CHIPS ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.16s}
+.chip:hover{border-color:#D6D9E8}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.scroll-x{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 10px;margin:0 -16px;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+.pill{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:650}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.01em}
+.badge-green{background:var(--green-soft);color:#087443}
+.badge-blue{background:var(--blue-soft);color:#175CD3}
+.badge-amber{background:var(--amber-soft);color:#B54708}
+.badge-grey{background:#F1F2F7;color:#5A6178}
+.tag{display:inline-block;padding:5px 11px;border-radius:10px;background:#F4F5FA;color:#4A5068;font-size:12px;font-weight:600}
+
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--c,#EEF0FF);color:#39405A;display:grid;place-items:center;font-weight:750;font-size:15px;flex:none;letter-spacing:-.02em}
+.avatar.lg{width:62px;height:62px;font-size:20px}
+.avatar.sm{width:34px;height:34px;font-size:12.5px}
+.avatar.xs{width:26px;height:26px;font-size:10.5px;border:2px solid #fff}
+.avatar-stack{display:flex}
+.avatar-stack .avatar{margin-left:-9px;border:2px solid #fff}
+.avatar-stack .avatar:first-child{margin-left:0}
+
+.ring{width:58px;height:58px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--accent) calc(var(--p)*1%),#EDEEF5 0);position:relative}
+.ring::after{content:'';position:absolute;inset:5px;background:#fff;border-radius:50%}
+.ring b{position:relative;z-index:1;font-size:13px;font-weight:800;color:var(--accent)}
+
+.progress{height:8px;border-radius:99px;background:#EDEEF5;overflow:hidden;margin:10px 0 8px}
+.progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s cubic-bezier(.3,1,.4,1)}
+
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr}
+.g3{grid-template-columns:1fr}
+@media(min-width:680px){.g2{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.g3{grid-template-columns:repeat(3,1fr)}}
+
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:26px 0 12px}
+.sec-title h2{font-size:19px}
+.sec-title button{background:none;border:0;color:var(--accent);font-size:13.5px;font-weight:650;padding:0}
+.page-head{margin:22px 0 16px}
+.page-head h1{font-size:26px;margin-bottom:6px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;overflow:hidden;padding:34px 0 10px}
+.hero::before{content:'';position:absolute;top:-260px;right:-180px;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(91,75,255,.20),transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-320px;left:-220px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(139,123,255,.16),transparent 65%);pointer-events:none}
+.hero-inner{position:relative;display:grid;gap:34px}
+@media(min-width:980px){.hero-inner{grid-template-columns:1.05fr .95fr;align-items:center;gap:40px;padding:36px 0 46px}}
+.hero h1{font-size:clamp(34px,9vw,60px);font-weight:800;letter-spacing:-.035em;margin:16px 0 14px}
+.grad{background:linear-gradient(105deg,var(--accent),#9C8BFF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:16.5px;color:var(--muted);max-width:520px;line-height:1.62}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 26px}
+.hero-stats{display:flex;gap:28px}
+.hero-stats strong{display:block;font-size:21px;font-weight:800;letter-spacing:-.03em}
+.hero-stats span{font-size:12.5px;color:var(--muted)}
+
+.hero-visual{position:relative;height:400px}
+@media(min-width:980px){.hero-visual{height:470px}}
+.hv{position:absolute;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);padding:12px 14px;animation:float 6s ease-in-out infinite}
+.hv-map{left:0;top:6%;width:62%;padding:14px;animation-delay:.1s}
+.hv-map-head{font-size:11.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.hv-map-head .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.hv-map-body{position:relative;height:150px;border-radius:12px;background:
+  linear-gradient(#EDEFF7 1px,transparent 1px) 0 0/26px 26px,
+  linear-gradient(90deg,#EDEFF7 1px,transparent 1px) 0 0/26px 26px,
+  linear-gradient(140deg,#F7F8FD,#EEF0FB);overflow:hidden}
+.hv-map-body svg{position:absolute;inset:0;width:100%;height:100%}
+.hv-map-body path{fill:none;stroke:var(--accent);stroke-width:1.1;stroke-dasharray:3 3;opacity:.5}
+.pin{position:absolute;width:26px;height:26px;border-radius:9px;background:#fff;display:grid;place-items:center;font-size:13px;box-shadow:0 4px 12px rgba(16,24,40,.16);border:1px solid var(--line)}
+.pin.p1{left:12%;top:18%} .pin.p2{left:62%;top:12%} .pin.p3{left:24%;top:62%} .pin.p4{left:70%;top:66%}
+.hv-match{right:0;top:0;display:flex;align-items:center;gap:10px;animation-delay:.9s}
+.hv-match b{font-size:13px;display:block}
+.hv-match span{font-size:11.5px;color:var(--accent);font-weight:700}
+.hv-apt{right:2%;bottom:16%;display:flex;align-items:center;gap:11px;animation-delay:1.7s}
+.hv-apt .thumb{width:42px;height:42px;border-radius:12px;background:linear-gradient(140deg,#EEECFF,#DCD8FF);display:grid;place-items:center;font-size:20px}
+.hv-apt b{font-size:12.5px;display:block}
+.hv-apt span{font-size:11.5px;color:var(--muted)}
+.hv-people{left:4%;bottom:2%;display:flex;align-items:center;gap:10px;animation-delay:2.4s}
+.hv-people b{font-size:12.5px;display:block}
+.hv-people span{font-size:11.5px;color:var(--muted)}
+
+/* ---------- FEATURES ---------- */
+.feature{display:flex;gap:14px;align-items:flex-start}
+.feature .fi{width:44px;height:44px;border-radius:13px;background:var(--accent-soft);display:grid;place-items:center;font-size:20px;flex:none}
+.feature h3{font-size:15.5px;margin-bottom:4px}
+.feature p{font-size:13.5px;color:var(--muted);line-height:1.55}
+
+/* ---------- STEPS ---------- */
+.steps{display:grid;gap:10px;counter-reset:s}
+.step{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}
+.step .n{width:32px;height:32px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:grid;place-items:center;font-weight:800;font-size:13.5px;flex:none}
+.step b{font-size:14.5px;display:block}
+.step span{font-size:13px;color:var(--muted)}
+
+/* ---------- LISTINGS ---------- */
+.listing{overflow:hidden;padding:0;display:flex;flex-direction:column;transition:.2s}
+.listing:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.listing-img{height:158px;position:relative;display:grid;place-items:center;font-size:48px;background:linear-gradient(140deg,#EEECFF,#DCD8FF)}
+.listing-img .badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.listing-img .save{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.94);display:grid;place-items:center;font-size:16px;box-shadow:0 4px 12px rgba(16,24,40,.14)}
+.listing-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:9px;flex:1}
+.listing-body h3{font-size:16px}
+.price{font-size:19px;font-weight:800;letter-spacing:-.03em}
+.price span{font-size:13px;font-weight:600;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.amenity-list{display:flex;flex-wrap:wrap;gap:6px}
+.amenity-list span{font-size:12px;font-weight:600;color:#4A5068;background:#F4F5FA;padding:5px 10px;border-radius:9px}
+
+/* ---------- MAP VIEW ---------- */
+.mapview{position:relative;height:440px;border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;background:
+  linear-gradient(#E9EBF4 1px,transparent 1px) 0 0/38px 38px,
+  linear-gradient(90deg,#E9EBF4 1px,transparent 1px) 0 0/38px 38px,
+  linear-gradient(140deg,#FAFBFF,#EEF0FB);box-shadow:var(--shadow)}
+.mapview .mpin{position:absolute;transform:translate(-50%,-100%);background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:12.5px;font-weight:700;box-shadow:0 6px 18px rgba(16,24,40,.16);white-space:nowrap}
+.mapview .mpin.v{border-color:#B7E9CE;background:#F3FDF8}
+
+/* ---------- ROOMMATE CARD ---------- */
+.rc-head{display:flex;gap:13px;align-items:center;margin-bottom:12px}
+.rc-head h3{font-size:16px}
+.rc-head p{font-size:13px;color:var(--muted)}
+.pros,.cons{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.pros li,.cons li{font-size:13.2px;display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.pros li::before{content:'✓';color:var(--green);font-weight:800;flex:none}
+.cons li::before{content:'⚠';color:var(--amber);flex:none}
+.rc-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.rc-actions .btn{flex:1;min-width:78px;padding:10px 12px;font-size:13px}
+
+/* ---------- ONBOARDING ---------- */
+.onb-shell{padding:26px 0 40px}
+.q-icon{width:58px;height:58px;border-radius:18px;background:var(--accent-soft);display:grid;place-items:center;font-size:27px;margin-bottom:14px}
+.q-card h2{font-size:22px;margin-bottom:6px}
+.q-options{display:grid;gap:10px;margin-top:20px}
+.q-option{text-align:left;padding:16px 18px;border-radius:16px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-weight:600;transition:.16s}
+.q-option:hover{border-color:var(--accent);background:#FBFAFF;transform:translateX(3px)}
+.q-option.selected{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:650;color:#3C4257}
+.field input,.field select{padding:13px 14px;border-radius:13px;border:1.5px solid var(--line);background:#fff;outline:none;transition:.16s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,75,255,.12)}
+.two-col{display:grid;gap:0 14px}
+@media(min-width:600px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* ---------- COMMUNITY ---------- */
+.post{padding:16px}
+.post-head{display:flex;gap:11px;align-items:center;margin-bottom:11px}
+.post-head b{font-size:14.5px;display:block}
+.post-head span{font-size:12.5px;color:var(--muted)}
+.post h3{font-size:15.5px;margin-bottom:6px}
+.post p{font-size:14px;color:#4A5068;line-height:1.6}
+.post-actions{display:flex;gap:16px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.post-actions button{background:none;border:0;font-size:13px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:6px;padding:0}
+.post-actions button.liked{color:var(--accent)}
+
+/* ---------- EVENTS ---------- */
+.event{display:flex;gap:14px;align-items:flex-start}
+.event .date{width:58px;flex:none;text-align:center;border-radius:14px;background:var(--accent-soft);padding:9px 0}
+.event .date b{display:block;font-size:19px;font-weight:800;color:var(--accent);line-height:1}
+.event .date span{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase}
+.event h3{font-size:15.5px;margin-bottom:5px}
+.event .meta-line{font-size:12.8px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px}
+
+/* ---------- MESSAGES ---------- */
+.thread-item{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:.16s;width:100%;text-align:left}
+.thread-item:hover{border-color:#D6D9E8;transform:translateY(-1px)}
+.chat{display:flex;flex-direction:column;height:calc(100vh - 250px);min-height:380px}
+.chat-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:16px 0}
+.bubble{max-width:78%;padding:11px 15px;border-radius:17px;font-size:14.2px;line-height:1.5}
+.bubble.them{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.bubble.me{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.chat-input{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.chat-input input{flex:1;padding:13px 15px;border-radius:14px;border:1.5px solid var(--line);outline:none}
+.chat-input input:focus{border-color:var(--accent)}
+
+/* ---------- MODAL ---------- */
+#modal{position:fixed;inset:0;z-index:200;background:rgba(14,18,32,.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:700px){#modal{align-items:center;padding:24px}}
+.modal-sheet{background:#fff;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));animation:slideUp .28s cubic-bezier(.3,1,.4,1)}
+@media(min-width:700px){.modal-sheet{border-radius:26px}}
+.modal-close{position:sticky;top:0;float:right;width:34px;height:34px;border-radius:50%;border:0;background:#F4F5FA;font-size:16px;color:#5A6178;display:grid;place-items:center}
+
+/* ---------- PROFILE ---------- */
+.profile-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:28px 18px}
+@media(min-width:600px){.profile-hero{flex-direction:row;text-align:left;gap:18px;padding:22px}}
+.lifestyle-grid{display:grid;gap:10px}
+@media(min-width:600px){.lifestyle-grid{grid-template-columns:1fr 1fr}}
+.ls-item{display:flex;justify-content:space-between;gap:10px;padding:11px 14px;border-radius:13px;background:#FAFBFF;border:1px solid var(--line);font-size:13.5px}
+.ls-item b{font-weight:650}
+
+footer.site{margin-top:44px;padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
 </head>
-
 <body>
 
-<div class="app">
-
-  <!-- ======================================================
-       HEADER
-       ====================================================== -->
-
-  <header class="desktop-header">
-
-    <div class="desktop-header-inner">
-
-      <button
-        class="brand"
-        data-page="home"
-        style="border:0;background:transparent"
-      >
-        <span class="brand-logo">G</span>
-        <span>GlobalStudent</span>
-      </button>
-
-
-      <nav class="desktop-nav">
-
-        <button
-          class="nav-link active"
-          data-page="home"
-        >
-          Home
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="housing"
-        >
-          Housing
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="roommates"
-        >
-          Roommates
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="community"
-        >
-          Community
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="events"
-        >
-          Events
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="guides"
-        >
-          City Guides
-        </button>
-
-        <button
-          class="nav-link"
-          data-page="safety"
-        >
-          Safety
-        </button>
-
-      </nav>
-
-
-      <div class="header-actions">
-
-        <button
-          class="btn btn-outline"
-          data-page="messages"
-        >
-          Messages
-        </button>
-
-        <button
-          class="btn btn-primary"
-          id="signupButton"
-        >
-          Sign Up
-        </button>
-
-        <button
-          class="avatar"
-          data-page="profile"
-        >
-          Y
-        </button>
-
-      </div>
-
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="logo" data-action="go" data-view="landing">
+      <div class="logo-mark">G</div>
+      <span>GlobalStudent<span class="accent">Hub</span></span>
     </div>
+    <nav class="nav-links" id="navLinks"></nav>
+    <div class="topbar-right" id="topbarRight"></div>
+  </div>
+</header>
 
-  </header>
+<main id="app"></main>
 
+<nav class="bottomnav" id="bottomNav"></nav>
+<div id="modal" class="hidden"></div>
 
-  <!-- ======================================================
-       HOME
-       ====================================================== -->
+<script>
+/* ==========================================================
+   DATA
+========================================================== */
+const QUESTIONS = [
+  {id:'cleanliness',icon:'✨',title:'Cleanliness',q:'How important is a clean apartment to you?',
+   options:['Very important','Important','Flexible'],weight:1.3,
+   same:'Both prefer a clean apartment',diff:'Different cleanliness standards'},
+  {id:'noise',icon:'🔊',title:'Noise level',q:'How much noise can you handle at home?',
+   options:['I prefer complete silence','Moderate noise is okay','I don’t mind noise'],weight:1.2,
+   same:'Similar noise preferences',diff:'Different noise tolerance'},
+  {id:'sleep',icon:'🌙',title:'Sleep schedule',q:'When do you usually sleep?',
+   options:['Early bird','Normal schedule','Night owl'],weight:1.3,
+   same:'Similar sleep schedule',diff:'Different sleep schedules'},
+  {id:'guests',icon:'🚪',title:'Guests',q:'How often do you have guests over?',
+   options:['I rarely have guests','Occasionally','Frequently'],weight:1.0,
+   same:'Similar guest habits',diff:'Different guest preferences'},
+  {id:'smoking',icon:'🚭',title:'Smoking',q:'What is your attitude to smoking?',
+   options:['Non-smoker','Smoking is okay','Smoking is not okay'],weight:1.5,
+   same:'Both non-smokers / aligned on smoking',diff:'Different views on smoking'},
+  {id:'shared',icon:'🧺',title:'Shared spaces',q:'How should shared spaces be kept?',
+   options:['I prefer everything very organized','Balanced','I’m flexible'],weight:1.0,
+   same:'Similar approach to shared spaces',diff:'Different approach to shared spaces'},
+  {id:'social',icon:'🎉',title:'Social lifestyle',q:'How social are you at home?',
+   options:['Mostly quiet/private','Balanced','Very social'],weight:1.0,
+   same:'Similar social lifestyle',diff:'Different social energy'},
+  {id:'cooking',icon:'🍳',title:'Cooking',q:'How often do you cook?',
+   options:['Cook frequently','Sometimes','Rarely'],weight:0.7,
+   same:'Similar cooking habits',diff:'Different cooking routines'},
+  {id:'study',icon:'📚',title:'Study environment',q:'What environment do you need to study?',
+   options:['I need a quiet environment','Some background activity is okay','I don’t mind noise'],weight:0.8,
+   same:'Similar study environment needs',diff:'Different study environment needs'},
+  {id:'privacy',icon:'🛋',title:'Privacy',q:'How much personal space do you need?',
+   options:['I strongly prefer personal space','Balanced','I enjoy spending time with roommates'],weight:1.0,
+   same:'Similar need for personal space',diff:'Different privacy preferences'},
+  {id:'pets',icon:'🐾',title:'Pets',q:'How do you feel about pets?',
+   options:['No pets please','Pets are okay','I have / love pets'],weight:0.9,
+   same:'Similar attitude to pets',diff:'Different attitude to pets'}
+];
 
-  <section
-    class="page active"
-    id="page-home"
-  >
+const STUDENTS = [
+  {id:'s1',name:'Amina Yusupova',age:20,university:'Astana IT University',program:'Computer Science',year:2,country:'Kazakhstan',color:'#E7E9FF',verified:true,
+   bio:'Second-year CS student. Calm, organized and usually studying. Looking for a quiet flatmate near campus.',
+   interests:['Coding','Yoga','Specialty coffee'],languages:['Kazakh','Russian','English'],
+   answers:{cleanliness:0,noise:0,sleep:1,guests:0,smoking:0,shared:0,social:0,cooking:1,study:0,privacy:0,pets:1}},
+  {id:'s2',name:'Daniel Okafor',age:22,university:'Nazarbayev University',program:'Economics',year:3,country:'Nigeria',color:'#FFEDE3',verified:true,
+   bio:'Exchange student from Lagos. I love cooking, football and meeting new people.',
+   interests:['Football','Cooking','Music'],languages:['English','French'],
+   answers:{cleanliness:1,noise:1,sleep:1,guests:1,smoking:2,shared:1,social:2,cooking:0,study:1,privacy:1,pets:1}},
+  {id:'s3',name:'Sara Kim',age:21,university:'Kazakh-British Technical University',program:'Marketing',year:2,country:'South Korea',color:'#E6F7F1',verified:true,
+   bio:'Organized and quiet. I study a lot and go to bed early. Looking for a tidy roommate.',
+   interests:['Design','Reading','Running'],languages:['Korean','English'],
+   answers:{cleanliness:0,noise:0,sleep:0,guests:0,smoking:0,shared:0,social:0,cooking:0,study:0,privacy:0,pets:0}},
+  {id:'s4',name:'Timur Akhmetov',age:20,university:'Astana IT University',program:'Cybersecurity',year:1,country:'Kazakhstan',color:'#EAF0FF',verified:false,
+   bio:'First year, night owl, gamer. Chill about most things as long as it stays friendly.',
+   interests:['Gaming','Basketball','Anime'],languages:['Kazakh','Russian'],
+   answers:{cleanliness:2,noise:2,sleep:2,guests:1,smoking:1,shared:2,social:1,cooking:2,study:2,privacy:1,pets:1}},
+  {id:'s5',name:'Leyla Hasanova',age:22,university:'Nazarbayev University',program:'Medicine',year:4,country:'Azerbaijan',color:'#FDECF3',verified:true,
+   bio:'Med student, early riser, very tidy. I value a calm home and personal space.',
+   interests:['Biology','Piano','Travel'],languages:['Azerbaijani','English','Russian'],
+   answers:{cleanliness:0,noise:0,sleep:0,guests:0,smoking:0,shared:0,social:0,cooking:0,study:0,privacy:2,pets:0}},
+  {id:'s6',name:'Marco Rossi',age:23,university:'Kazakh-British Technical University',program:'Engineering',year:3,country:'Italy',color:'#FFF6E5',verified:true,
+   bio:'From Milan, on exchange for a year. Social, cook a lot, always up for a coffee.',
+   interests:['Cooking','Cycling','Photography'],languages:['Italian','English'],
+   answers:{cleanliness:1,noise:1,sleep:2,guests:2,smoking:1,shared:1,social:2,cooking:0,study:1,privacy:1,pets:1}},
+  {id:'s7',name:'Aigerim Nurlan',age:19,university:'Astana IT University',program:'Data Science',year:1,country:'Kazakhstan',color:'#EFE9FF',verified:true,
+   bio:'From Shymkent, first time living alone. Friendly, tidy and quiet on weekdays.',
+   interests:['Data','K-pop','Baking'],languages:['Kazakh','Russian','English'],
+   answers:{cleanliness:0,noise:1,sleep:1,guests:1,smoking:0,shared:0,social:1,cooking:1,study:0,privacy:1,pets:1}},
+  {id:'s8',name:'Omar Al-Farsi',age:21,university:'Nazarbayev University',program:'Political Science',year:2,country:'Oman',color:'#E9F6FF',verified:false,
+   bio:'Quiet, respectful, non-smoker. I like a clean kitchen and study late.',
+   interests:['Debate','History','Chess'],languages:['Arabic','English'],
+   answers:{cleanliness:0,noise:0,sleep:2,guests:0,smoking:0,shared:0,social:0,cooking:1,study:0,privacy:0,pets:0}}
+];
 
-    <div class="container">
+const LISTINGS = [
+  {id:'a1',title:'Bright Student Apartment',area:'Astana, near Astana IT University',price:120000,deposit:120000,
+   rooms:2,baths:1,dist:0.4,available:1,roommates:1,type:'Private room',emoji:'🏙',color:'#E7E9FF',
+   amenities:['Wi-Fi','Furnished','Near university','Kitchen','Washing machine'],
+   rules:['No smoking indoors','Quiet after 23:00','Guests allowed with notice'],
+   landlord:'Aizhan K.',vApartment:true,vLandlord:true,moveIn:'1 Sep 2025',x:26,y:32},
+  {id:'a2',title:'Cozy Shared Flat near NU',area:'Astana, Qabanbay Batyr district',price:85000,deposit:85000,
+   rooms:3,baths:1,dist:1.2,available:2,roommates:2,type:'Shared room',emoji:'🛏',color:'#E6F7F1',
+   amenities:['Wi-Fi','Furnished','Kitchen','Balcony'],
+   rules:['No smoking','Keep common areas clean'],
+   landlord:'Bekzat T.',vApartment:true,vLandlord:false,moveIn:'15 Sep 2025',x:58,y:24},
+  {id:'a3',title:'Modern Studio for Two',area:'Astana, Esil district',price:150000,deposit:150000,
+   rooms:1,baths:1,dist:2.1,available:1,roommates:1,type:'Private room',emoji:'🏢',color:'#EAF0FF',
+   amenities:['Wi-Fi','Furnished','Gym','Concierge','Near metro'],
+   rules:['No parties','No smoking','Pets on request'],
+   landlord:'Dana S.',vApartment:true,vLandlord:true,moveIn:'5 Sep 2025',x:44,y:62},
+  {id:'a4',title:'Student Coliving "Dorm 2.0"',area:'Astana, Saryarka district',price:70000,deposit:40000,
+   rooms:4,baths:2,dist:0.9,available:3,roommates:5,type:'Shared room',emoji:'🏘',color:'#FFF6E5',
+   amenities:['Wi-Fi','Kitchen','Study room','Laundry','Coworking'],
+   rules:['Quiet hours 23:00–08:00','Cleaning schedule'],
+   landlord:'Coliving Astana',vApartment:false,vLandlord:false,moveIn:'1 Sep 2025',x:70,y:58},
+  {id:'a5',title:'Quiet Room in Family Apartment',area:'Astana, Almaty district',price:95000,deposit:95000,
+   rooms:2,baths:1,dist:1.6,available:1,roommates:1,type:'Private room',emoji:'🏡',color:'#FDECF3',
+   amenities:['Wi-Fi','Furnished','Kitchen','Near bus stop'],
+   rules:['No smoking','No overnight guests'],
+   landlord:'Gulnara M.',vApartment:false,vLandlord:true,moveIn:'10 Sep 2025',x:36,y:78},
+  {id:'a6',title:'Skyline Apartment with Balcony',area:'Astana, Left Bank',price:180000,deposit:180000,
+   rooms:3,baths:2,dist:3.0,available:1,roommates:2,type:'Private room',emoji:'🌆',color:'#EFE9FF',
+   amenities:['Wi-Fi','Furnished','Balcony','Dishwasher','Parking','Gym'],
+   rules:['No smoking','Guests allowed','Keep it tidy'],
+   landlord:'Ruslan Z.',vApartment:true,vLandlord:true,moveIn:'20 Sep 2025',x:78,y:38}
+];
 
-      <div class="hero">
+const EVENTS = [
+  {id:'e1',name:'International Student Welcome Night',d:'12',mon:'Sep',date:'12 Sep 2025',time:'18:00',
+   place:'Astana IT University, Block C',organizer:'AST Student Union',people:184,cat:'Networking',
+   desc:'Meet exchange and international students, free pizza, speed-friending and a short campus tour.'},
+  {id:'e2',name:'Language Exchange: Russian & English',d:'14',mon:'Sep',date:'14 Sep 2025',time:'19:00',
+   place:'Coffee Point, Qabanbay Batyr',organizer:'Language Club Astana',people:62,cat:'Language Exchange',
+   desc:'Table-based language practice. Beginners welcome — no pressure, just talking.'},
+  {id:'e3',name:'City Walk: Astana Essentials',d:'16',mon:'Sep',date:'16 Sep 2025',time:'11:00',
+   place:'Meeting point: Baiterek Tower',organizer:'GlobalStudent Hub',people:41,cat:'City Life',
+   desc:'Where to buy a SIM card, which supermarket is cheap, how to use the bus — all in one walk.'},
+  {id:'e4',name:'Football Night for Students',d:'18',mon:'Sep',date:'18 Sep 2025',time:'20:00',
+   place:'Astana Arena Sports Complex',organizer:'NU Sports Club',people:96,cat:'Sport',
+   desc:'Friendly 7v7 tournament. Just bring shoes — teams are mixed on the spot.'},
+  {id:'e5',name:'CV & Internship Workshop',d:'21',mon:'Sep',date:'21 Sep 2025',time:'16:00',
+   place:'Nazarbayev University, Hall 2',organizer:'Career Center',people:130,cat:'Workshop',
+   desc:'How to build a CV for the Kazakhstani market, plus a Q&A with HR from local tech companies.'},
+  {id:'e6',name:'International Food Festival',d:'27',mon:'Sep',date:'27 Sep 2025',time:'13:00',
+   place:'Central Park, Astana',organizer:'Student Community',people:310,cat:'Cultural',
+   desc:'Cook a dish from home and try food from 20+ countries. Bring a friend, bring an appetite.'}
+];
 
-        <div>
+const POSTS = [
+  {id:'p1',cat:'New Students',author:'Aigerim Nurlan',color:'#EFE9FF',time:'2h ago',
+   title:'Just moved to Astana — where do I get a SIM card?',
+   body:'Arrived yesterday and my roaming is killing me 😅 Any advice on which operator is best for students and where to get it fast?',
+   likes:24,comments:8,liked:false},
+  {id:'p2',cat:'Housing',author:'Daniel Okafor',color:'#FFEDE3',time:'5h ago',
+   title:'Is ₸120,000 normal for a private room near AST?',
+   body:'Comparing a few places. Some are ₸85k but shared, some ₸150k fully private. What did you pay when you first arrived?',
+   likes:41,comments:17,liked:false},
+  {id:'p3',cat:'Questions & Advice',author:'Sara Kim',color:'#E6F7F1',time:'1d ago',
+   title:'How do I register my address as a student?',
+   body:'My university said I need to register within 10 days. Does anyone know exactly which documents to bring?',
+   likes:33,comments:12,liked:false},
+  {id:'p4',cat:'Events',author:'Marco Rossi',color:'#FFF6E5',time:'1d ago',
+   title:'Anyone going to the Food Festival on the 27th?',
+   body:'I want to cook something Italian but I need a kitchen buddy. Who is in? 🇮🇹',
+   likes:19,comments:6,liked:false},
+  {id:'p5',cat:'Study Groups',author:'Leyla Hasanova',color:'#FDECF3',time:'2d ago',
+   title:'Looking for a quiet study group (Medicine, year 2–4)',
+   body:'We meet at the NU library every Tuesday and Thursday evening. Two spots open. Serious people only please.',
+   likes:27,comments:9,liked:false}
+];
 
-          <div class="hero-badge">
-            🌍 Made for students moving somewhere new
-          </div>
+const THREADS = [
+  {id:'t1',name:'Amina Yusupova',color:'#E7E9FF',verified:true,last:'Hi! Are you still looking for a room near AST?',
+   messages:[
+     {from:'them',text:'Hi! I saw your profile — we seem to have a really similar schedule 😊'},
+     {from:'me',text:'Hey Amina! Yes, 94% compatibility is impressive. Are you looking for September?'},
+     {from:'them',text:'Yes, from the 1st. Do you prefer a private room or shared?'}
+   ]},
+  {id:'t2',name:'Daniel Okafor',color:'#FFEDE3',verified:true,last:'I can send you the photos of the flat',
+   messages:[
+     {from:'them',text:'I can send you the photos of the flat if you want'},
+     {from:'me',text:'That would be great, thanks!'}
+   ]},
+  {id:'t3',name:'Sara Kim',color:'#E6F7F1',verified:true,last:'Sounds good, let’s meet on campus',
+   messages:[
+     {from:'me',text:'Hey! Are you free to grab coffee this week and talk about the apartment?'},
+     {from:'them',text:'Sounds good, let’s meet on campus'}
+   ]}
+];
 
-          <h1>
-            Your New City.<br>
-            Your Home.<br>
-            <span class="hero-highlight">
-              Your People.
-            </span>
-          </h1>
+const GUIDE = {
+  city:'Astana',
+  gettingAround:{icon:'🚌',items:[
+    {t:'Public transport',d:'Bus fare is ₸200, paid by QR or transport card. City buses run 06:00–23:00; the LRT connects the airport area with the Left Bank.'},
+    {t:'Taxi & apps',d:'Yandex Go is the most used app. A ride across the city usually costs ₸900–₸1,800. Always confirm the car number before getting in.'},
+    {t:'Student transport card',d:'Ask your university international office — students get a discounted monthly pass.'}
+  ]},
+  studentLife:{icon:'☕',items:[
+    {t:'Cafes & study spots',d:'Coffee Point, Aroma and Starbucks on the Left Bank are laptop-friendly. Local chain "Kausar" has cheap coffee and outlets.'},
+    {t:'Libraries',d:'Nazarbayev University Library and the National Academic Library are free with a student ID and have silent floors.'},
+    {t:'Affordable food',d:'Canteens at universities cost ₸800–₸1,500 per meal. "Basilic" and "Kaganat" are popular student-friendly cafes.'},
+    {t:'Shopping',d:'Small "Magnum" and "Small" supermarkets are cheapest for groceries. Keruen and Mega are the main malls.'}
+  ]},
+  practical:{icon:'📋',items:[
+    {t:'SIM cards',d:'Beeline, Activ (Tele2) and Altel. A tourist/student SIM costs ~₸1,000–₸3,000 and needs your passport. Buy at the operator’s official store, not a street kiosk.'},
+    {t:'Banking',d:'Kaspi Bank is the most convenient for students — open a card at any branch with your passport and IIN. It is used for transfers, QR payments and bills.'},
+    {t:'Registration',d:'Register your address within 10 days of arrival. Bring your passport, visa/migration card and a letter from your landlord or university.'},
+    {t:'Emergency numbers',d:'101 — Fire, 102 — Police, 103 — Ambulance, 112 — All emergencies. Save them in your phone now.'},
+    {t:'University services',d:'Your international office helps with registration, dormitory issues, insurance and student ID cards. Visit them in your first week.'}
+  ]},
+  culture:{icon:'🌏',items:[
+    {t:'Local customs',d:'Remove your shoes when entering someone’s home. Always accept tea when offered — it is a sign of hospitality.'},
+    {t:'Useful phrases',d:'"Sälem" (hello), "Rahmet" (thank you), "Keshiriniz" (sorry), "Qansha turady?" (how much does it cost?).'},
+    {t:'Cultural etiquette',d:'Be respectful when discussing history and family. Kazakhs are warm but value politeness and calm behaviour in public.'}
+  ]}
+};
 
-          <p>
-            Find verified student housing,
-            meet compatible roommates,
-            and connect with your new community
-            before you even arrive.
-          </p>
+/* ==========================================================
+   HELPERS
+========================================================== */
+function initials(n){return (n||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+function avatarHTML(name,color,cls=''){return '<div class="avatar '+cls+'" style="--c:'+(color||'#EEF0FF')+'">'+initials(name)+'</div>';}
+function money(n){return '₸'+Number(n).toLocaleString('en-US');}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-          <div class="hero-buttons">
+function compat(userAns, otherAns){
+  let sum=0,wsum=0;
+  QUESTIONS.forEach(q=>{
+    const w=q.weight||1, a=userAns[q.id], b=otherAns[q.id];
+    let s;
+    if(a===undefined||b===undefined){s=0.7;}
+    else{const d=Math.abs(a-b); s = d===0?1 : d===1?0.62 : 0.24;}
+    sum+=s*w; wsum+=w;
+  });
+  return Math.round((sum/wsum)*100);
+}
+function sharedAndDiff(userAns, otherAns){
+  const same=[],diff=[];
+  QUESTIONS.forEach(q=>{
+    const a=userAns[q.id], b=otherAns[q.id];
+    if(a===undefined||b===undefined) return;
+    if(a===b) same.push(q.same); else diff.push(q.diff);
+  });
+  return {same:same.slice(0,4),diff:diff.slice(0,2)};
+}
+function matchedStudents(){
+  const mine = state.answers;
+  return STUDENTS
+    .filter(s=>!state.passed.includes(s.id))
+    .map(s=>({...s, score:compat(mine,s.answers)}))
+    .sort((a,b)=>b.score-a.score);
+}
+function listingById(id){return LISTINGS.find(l=>l.id===id);}
+function studentById(id){return STUDENTS.find(s=>s.id===id);}
 
-            <button
-              class="btn btn-primary"
-              data-page="housing"
-            >
-              Find My Home
-            </button>
+/* ==========================================================
+   STATE
+========================================================== */
+const state = {
+  view:'landing',
+  started:false,
+  onboarded:false,
+  goal:null,
+  params:{},
+  profile:{name:'Yasmin',age:21,university:'Astana IT University',city:'Astana',country:'Kazakhstan',
+           program:'Computer Science',year:'2nd year',moveIn:'2025-09-01',stay:'10 months'},
+  answers:{},
+  onb:{step:0,data:{name:'',age:'',university:'',city:'',country:'',program:'',year:'',moveIn:'',stay:''},answers:{}},
+  hActive:[],hQuery:'',hView:'list',
+  rActive:[],
+  cCat:'All',
+  gTab:'gettingAround',
+  saved:[],joined:[],liked:[],passed:[],
+  threads:JSON.parse(JSON.stringify(THREADS)),
+  posts:JSON.parse(JSON.stringify(POSTS))
+};
 
-            <button
-              class="btn btn-outline"
-              data-page="roommates"
-            >
-              Find a Roommate
-            </button>
+/* ==========================================================
+   ICONS
+========================================================== */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.2 12 3l9 7.2V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  housing:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-5h6v5"/></svg>',
+  roommates:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.6 20a6.4 6.4 0 0 1 12.8 0"/><circle cx="17.6" cy="9.6" r="2.5"/><path d="M15.2 20a5.4 5.4 0 0 1 6.2-4.5"/></svg>',
+  community:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>',
+  profile:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>'
+};
 
-          </div>
+/* ==========================================================
+   NAV / CHROME
+========================================================== */
+const NAV_ITEMS = [
+  {v:'dashboard',l:'Home',i:'home'},
+  {v:'housing',l:'Housing',i:'housing'},
+  {v:'roommates',l:'Roommates',i:'roommates'},
+  {v:'community',l:'Community',i:'community'},
+  {v:'profile',l:'Profile',i:'profile'}
+];
+const DESK_NAV = [
+  {v:'dashboard',l:'Home'},{v:'housing',l:'Housing'},{v:'roommates',l:'Roommates'},
+  {v:'community',l:'Community'},{v:'guides',l:'Guides'},{v:'events',l:'Events'},{v:'messages',l:'Messages'}
+];
 
+function renderChrome(){
+  const nl = document.getElementById('navLinks');
+  const tr = document.getElementById('topbarRight');
+  const bn = document.getElementById('bottomNav');
+
+  nl.innerHTML = state.onboarded
+    ? DESK_NAV.map(n=>'<button data-action="go" data-view="'+n.v+'" class="'+(state.view===n.v?'active':'')+'">'+n.l+'</button>').join('')
+    : '';
+
+  if(state.onboarded){
+    tr.innerHTML = '<button class="btn btn-soft btn-sm" data-action="go" data-view="profile">'+
+      avatarHTML(state.profile.name||'Yasmin','#EEECFF','sm')+'</button>';
+  } else if(state.view==='landing'){
+    tr.innerHTML = '<button class="btn btn-ghost btn-sm" data-action="start" data-goal="housing">Sign up</button>';
+  } else {
+    tr.innerHTML = '';
+  }
+
+  bn.innerHTML = state.onboarded
+    ? NAV_ITEMS.map(n=>'<button data-action="go" data-view="'+n.v+'" class="'+(state.view===n.v?'active':'')+'">'+ICONS[n.i]+'<span>'+n.l+'</span></button>').join('')
+    : '';
+  bn.style.display = state.onboarded ? '' : 'none';
+}
+
+/* ==========================================================
+   VIEWS
+========================================================== */
+
+/* ---------- LANDING ---------- */
+function viewLanding(){
+  return `
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <span class="pill">🌍 For students moving to a new city</span>
+        <h1>Your New City.<br>Your Home. <span class="grad">Your People.</span></h1>
+        <p class="lead">Find verified student housing, meet compatible roommates, and connect with your new community before you even arrive.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" data-action="start" data-goal="housing">🏠 Find My Home</button>
+          <button class="btn btn-ghost" data-action="start" data-goal="roommates">🤝 Find a Roommate</button>
         </div>
-
-
-        <div class="hero-visual">
-
-          <div class="hero-house-card">
-
-            <div class="hero-house-image"></div>
-
-            <strong>
-              Bright Student Apartment
-            </strong>
-
-            <p style="
-              font-size:12px;
-              margin:5px 0;
-            ">
-              📍 Astana · Near Astana IT University
-            </p>
-
-            <div style="
-              font-size:20px;
-              font-weight:900;
-              margin:8px 0;
-            ">
-              ₸120,000 / month
-            </div>
-
-            <span class="badge badge-success">
-              ✓ Verified Apartment
-            </span>
-
-          </div>
-
-
-          <div class="hero-roommate">
-
-            <small style="color:var(--muted)">
-              Potential roommate
-            </small>
-
-            <h3>Amina</h3>
-
-            <div class="hero-match-score">
-              94% Match
-            </div>
-
-            <p style="
-              font-size:12px;
-              color:var(--muted);
-            ">
-              Similar schedule,
-              cleanliness and lifestyle.
-            </p>
-
-          </div>
-
+        <div class="hero-stats">
+          <div><strong>2,400+</strong><span>verified listings</span></div>
+          <div><strong>18</strong><span>universities</span></div>
+          <div><strong>12k</strong><span>students</span></div>
         </div>
-
       </div>
 
-
-      <div class="trust-strip">
-
-        <div class="trust-card">
-          <strong>320+</strong>
-          <span>Verified student homes</span>
+      <div class="hero-visual">
+        <div class="hv hv-map">
+          <div class="hv-map-head"><span class="dot"></span> Astana · student districts</div>
+          <div class="hv-map-body">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M16,26 C40,44 58,32 76,62"/>
+              <path d="M16,26 C34,62 48,70 66,82"/>
+              <path d="M76,62 C70,74 62,78 52,82"/>
+            </svg>
+            <span class="pin p1">🏠</span><span class="pin p2">🎓</span>
+            <span class="pin p3">☕</span><span class="pin p4">🏠</span>
+          </div>
         </div>
 
-        <div class="trust-card">
-          <strong>1,850+</strong>
-          <span>Student profiles</span>
+        <div class="hv hv-match">
+          <div class="avatar" style="--c:#E7E9FF">AY</div>
+          <div><b>Amina, 20</b><span>94% compatible</span></div>
         </div>
 
-        <div class="trust-card">
-          <strong>36</strong>
-          <span>Universities</span>
+        <div class="hv hv-apt">
+          <div class="thumb">🏙</div>
+          <div><b>Bright Student Apartment</b><span>₸120,000/mo · 0.4 km to campus</span></div>
         </div>
 
-        <div class="trust-card">
-          <strong>14</strong>
-          <span>Cities supported</span>
+        <div class="hv hv-people">
+          <div class="avatar-stack">
+            <div class="avatar xs" style="--c:#E7E9FF">AY</div>
+            <div class="avatar xs" style="--c:#FFEDE3">DO</div>
+            <div class="avatar xs" style="--c:#E6F7F1">SK</div>
+          </div>
+          <div><b>128 students online</b><span>in Astana right now</span></div>
         </div>
-
       </div>
-
     </div>
-
-
-    <!-- Dashboard -->
-
-    <div class="container section">
-
-      <div class="dashboard-welcome">
-
-        <div>
-
-          <h2>
-            Welcome, Yasmin 👋
-          </h2>
-
-          <p>
-            Your move to Astana is getting closer.
-            Here are your personalized recommendations.
-          </p>
-
-        </div>
-
-
-        <div class="progress-panel">
-
-          <strong id="dashboardProfileStatus">
-            Your Profile: 85% complete
-          </strong>
-
-          <div class="progress-track">
-            <div
-              class="progress-fill"
-              id="dashboardProgress"
-            ></div>
-          </div>
-
-          <small>
-            Complete your lifestyle questionnaire
-            to improve roommate recommendations.
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <h2 class="section-title">
-        Your Dashboard
-      </h2>
-
-      <p class="section-subtitle">
-        Everything you need for your move,
-        all in one place.
-      </p>
-
-
-      <div class="grid">
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            🏠
-          </div>
-
-          <h3>Recommended Apartments</h3>
-
-          <p>
-            12 verified apartments
-            fit your university and budget.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="housing"
-          >
-            Explore Housing
-          </button>
-
-        </div>
-
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            👥
-          </div>
-
-          <h3>Roommate Matches</h3>
-
-          <p>
-            Your strongest current match
-            is 94% compatible.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="roommates"
-          >
-            View Matches
-          </button>
-
-        </div>
-
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            🎉
-          </div>
-
-          <h3>Upcoming Events</h3>
-
-          <p>
-            International Student Welcome Night
-            is happening this Friday.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="events"
-          >
-            Browse Events
-          </button>
-
-        </div>
-
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            💬
-          </div>
-
-          <h3>Messages</h3>
-
-          <p>
-            Continue conversations
-            with potential roommates.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="messages"
-          >
-            Open Messages
-          </button>
-
-        </div>
-
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            🗺️
-          </div>
-
-          <h3>Local Tips</h3>
-
-          <p>
-            Transport, SIM cards,
-            banking and practical Astana advice.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="guides"
-          >
-            Explore Astana
-          </button>
-
-        </div>
-
-
-        <div class="card dashboard-shortcut">
-
-          <div class="dashboard-shortcut-icon">
-            🛡️
-          </div>
-
-          <h3>Safety Center</h3>
-
-          <p>
-            Learn how student,
-            landlord and apartment verification works.
-          </p>
-
-          <br>
-
-          <button
-            class="btn btn-secondary"
-            data-page="safety"
-          >
-            Safety Center
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div class="journey">
-
-        <h2>
-          From sign-up to move-in
-        </h2>
-
-        <p style="
-          color:var(--muted);
-          margin-top:5px;
-        ">
-          GlobalStudent Hub supports
-          the complete student relocation journey.
-        </p>
-
-
-        <div class="journey-track">
-
-          <div class="journey-step">
-            1. Sign Up
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            2. Verify University
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            3. Lifestyle Profile
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            4. Find Housing
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            5. Match Roommates
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            6. Connect
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            7. Join Community
-          </div>
-
-          <div class="journey-arrow">→</div>
-
-          <div class="journey-step">
-            8. Move In
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
   </section>
 
+  <section class="wrap" style="margin-top:34px">
+    <div class="sec-title"><h2>Everything you need before you arrive</h2></div>
+    <div class="grid g3">
+      <div class="card feature"><div class="fi">🏠</div><div><h3>Verified housing</h3><p>Every apartment is checked: identity, property documents and, where possible, university confirmation.</p></div></div>
+      <div class="card feature"><div class="fi">🤝</div><div><h3>Smart roommate matching</h3><p>A lifestyle questionnaire turns into a compatibility score — sleep, cleanliness, noise, guests and more.</p></div></div>
+      <div class="card feature"><div class="fi">💬</div><div><h3>Community from day one</h3><p>Groups, events and students from your university — so you don't land in a city where you know nobody.</p></div></div>
+      <div class="card feature"><div class="fi">🗺</div><div><h3>Local guides</h3><p>SIM cards, banking, registration, transport, cheap food and cultural etiquette — written for students.</p></div></div>
+      <div class="card feature"><div class="fi">🎉</div><div><h3>Events board</h3><p>Welcome nights, language exchanges, sport, workshops and city walks in your first weeks.</p></div></div>
+      <div class="card feature"><div class="fi">🛡</div><div><h3>Safety first</h3><p>Verification badges, reporting, blocking and moderation. Your personal data stays private.</p></div></div>
+    </div>
+  </section>
 
-  <!-- ======================================================
-       ONBOARDING
-       ====================================================== -->
+  <section class="wrap" style="margin-top:36px">
+    <div class="sec-title"><h2>How it works</h2></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div><b>Sign up &amp; verify your university</b><span>Confirm you're a real student with your university email.</span></div></div>
+      <div class="step"><div class="n">2</div><div><b>Complete the lifestyle questionnaire</b><span>11 quick questions — takes about 2 minutes.</span></div></div>
+      <div class="step"><div class="n">3</div><div><b>Discover housing &amp; roommates</b><span>Verified apartments and people who actually match your lifestyle.</span></div></div>
+      <div class="step"><div class="n">4</div><div><b>Connect &amp; prepare for arrival</b><span>Message, join the community, read the local guide, save events.</span></div></div>
+      <div class="step"><div class="n">5</div><div><b>Move in 🎉</b><span>Land in your new city with a home and people already waiting.</span></div></div>
+    </div>
+    <div style="text-align:center;margin:30px 0 10px">
+      <button class="btn btn-primary" data-action="start" data-goal="housing">Get started — it's free</button>
+    </div>
+  </section>
 
-  <section
-    class="page"
-    id="page-onboarding"
-  >
+  <footer class="site"><div class="wrap">
+    <div class="between" style="flex-wrap:wrap;gap:14px">
+      <div>© 2025 GlobalStudent Hub · Prototype with mock data</div>
+      <div class="row" style="gap:16px">
+        <button class="btn btn-sm" style="background:none;border:0;color:var(--muted);padding:0" data-action="open-safety">Safety guidelines</button>
+        <button class="btn btn-sm" style="background:none;border:0;color:var(--muted);padding:0" data-action="start" data-goal="housing">Sign up</button>
+      </div>
+    </div>
+  </div></footer>`;
+}
 
-    <div class="container section">
+/* ---------- ONBOARDING ---------- */
+function viewOnboarding(){
+  const o = state.onb;
+  const total = QUESTIONS.length + 2;
+  const pct = Math.round((o.step/(total-1))*100);
 
-      <h1 class="section-title">
-        Build Your Student Profile
-      </h1>
+  if(o.step===0) return onbBasic(pct);
+  if(o.step<=QUESTIONS.length) return onbQuestion(pct);
+  return onbResult(pct);
+}
 
-      <p class="section-subtitle">
-        Tell us about your move and lifestyle.
-        This information helps improve your housing
-        and roommate recommendations.
-      </p>
+function onbHeader(pct,label){
+  return `<div style="margin-bottom:18px">
+    <div class="between" style="margin-bottom:8px">
+      <span class="muted small" style="font-weight:650">${label}</span>
+      <span class="muted small">${pct}%</span>
+    </div>
+    <div class="progress" style="margin:0"><i style="width:${pct}%"></i></div>
+  </div>`;
+}
 
+function onbBasic(pct){
+  const d = state.onb.data;
+  return `<div class="wrap narrow onb-shell">
+    ${onbHeader(pct,'Step 1 · Basic information')}
+    <div class="card">
+      <h2 style="font-size:22px;margin-bottom:6px">Tell us about you</h2>
+      <p class="muted small" style="margin-bottom:20px">This helps us show the right apartments and people. Nothing is public by default.</p>
+      <div class="two-col">
+        <div class="field"><label>Name</label><input data-field="name" value="${esc(d.name)}" placeholder="Yasmin"></div>
+        <div class="field"><label>Age</label><input data-field="age" type="number" value="${esc(d.age)}" placeholder="21"></div>
+      </div>
+      <div class="field"><label>University</label>
+        <select data-field="university">
+          ${['Astana IT University','Nazarbayev University','Kazakh-British Technical University','Eurasian National University','Other'].map(u=>'<option '+(d.university===u?'selected':'')+'>'+u+'</option>').join('')}
+        </select>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>City</label><input data-field="city" value="${esc(d.city)}" placeholder="Astana"></div>
+        <div class="field"><label>Country</label><input data-field="country" value="${esc(d.country)}" placeholder="Kazakhstan"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Study program</label><input data-field="program" value="${esc(d.program)}" placeholder="Computer Science"></div>
+        <div class="field"><label>Year of study</label>
+          <select data-field="year">
+            ${['1st year','2nd year','3rd year','4th year','Master’s'].map(y=>'<option '+(d.year===y?'selected':'')+'>'+y+'</option>').join('')}
+          </select>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Move-in date</label><input data-field="moveIn" type="date" value="${esc(d.moveIn)}"></div>
+        <div class="field"><label>Length of stay</label>
+          <select data-field="stay">
+            ${['1 semester','6 months','10 months','1 year','2+ years'].map(s=>'<option '+(d.stay===s?'selected':'')+'>'+s+'</option>').join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:16px;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" data-action="onb-next">Continue →</button>
+      <button class="btn btn-ghost" data-action="onb-demo">Use demo profile</button>
+    </div>
+    <p class="muted small" style="margin-top:14px">🔒 Your data is used only for matching. You control what's visible on your profile.</p>
+  </div>`;
+}
 
-      <form
-        class="form-card"
-        id="onboardingForm"
-      >
+function onbQuestion(pct){
+  const q = QUESTIONS[state.onb.step-1];
+  const cur = state.onb.answers[q.id];
+  return `<div class="wrap narrow onb-shell">
+    ${onbHeader(pct,'Lifestyle · Question '+state.onb.step+' of '+QUESTIONS.length)}
+    <div class="card q-card">
+      <div class="q-icon">${q.icon}</div>
+      <h2>${q.title}</h2>
+      <p class="muted">${q.q}</p>
+      <div class="q-options">
+        ${q.options.map((o,i)=>`<button class="q-option ${cur===i?'selected':''}" data-action="answer" data-q="${q.id}" data-i="${i}">${o}</button>`).join('')}
+      </div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn btn-ghost" data-action="onb-back">← Back</button>
+    </div>
+  </div>`;
+}
 
-        <div class="form-section">
+function lifestyleTitle(a){
+  const adj=[];
+  if(a.cleanliness===0) adj.push('Tidy'); else if(a.cleanliness===2) adj.push('Easy-going');
+  if(a.noise===0) adj.push('Quiet'); else if(a.noise===2) adj.push('Noise-proof');
+  if(a.sleep===0) adj.push('Early Bird'); else if(a.sleep===2) adj.push('Night Owl');
+  if(a.social===2) adj.push('Social'); else if(a.social===0) adj.push('Private');
+  const top = adj.slice(0,2);
+  if(!top.length) top.push('Balanced','Flexible');
+  if(top.length===1) top.push('Student');
+  return 'The '+top[0]+' &amp; '+top[1];
+}
 
-          <h3>
-            Basic Information
-          </h3>
+function onbResult(pct){
+  const a = state.onb.answers;
+  const rows = QUESTIONS.map(q=>{
+    const v = a[q.id];
+    return `<div class="ls-item"><span>${q.icon} ${q.title}</span><b>${v===undefined?'—':q.options[v]}</b></div>`;
+  }).join('');
 
+  return `<div class="wrap narrow onb-shell">
+    ${onbHeader(100,'Your lifestyle profile')}
+    <div class="card" style="text-align:center;padding:26px 18px">
+      <div style="font-size:44px;margin-bottom:8px">✨</div>
+      <p class="muted small" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">Lifestyle profile</p>
+      <h2 style="font-size:26px;margin:8px 0 10px">${lifestyleTitle(a)}</h2>
+      <p class="muted" style="max-width:440px;margin:0 auto">We'll use this to calculate compatibility with other students and to recommend apartments that fit how you actually live.</p>
+    </div>
+    <div class="sec-title"><h2>Your answers</h2></div>
+    <div class="lifestyle-grid">${rows}</div>
+    <div class="row" style="margin-top:22px;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" data-action="onb-finish">Go to my dashboard →</button>
+      <button class="btn btn-ghost" data-action="onb-restart">Redo questionnaire</button>
+    </div>
+  </div>`;
+}
 
-          <div class="form-grid">
+/* ---------- DASHBOARD ---------- */
+function profileCompletion(){
+  if(!state.onboarded) return 0;
+  let done = 1;
+  if(Object.keys(state.answers).length >= QUESTIONS.length) done += 1;
+  if(state.profile.name) done += 1;
+  if(state.profile.university) done += 1;
+  return Math.min(100, Math.round((done/4)*100));
+}
 
-            <div class="field">
-              <label>Name</label>
-              <input
-                id="profileName"
-                value="Yasmin"
-                required
-              >
-            </div>
+function viewDashboard(){
+  const name = (state.profile.name||'Yasmin').split(' ')[0];
+  const comp = profileCompletion();
+  const recApts = LISTINGS.filter(l=>l.vApartment&&l.vLandlord).slice(0,3);
+  const recMates = matchedStudents().slice(0,3);
+  const evs = EVENTS.slice(0,2);
+  const posts = state.posts.slice(0,2);
+  const tips = GUIDE.practical.items.slice(0,3);
+  const savedListings = state.saved.map(listingById).filter(Boolean);
 
+  return `<div class="wrap">
+    <div class="dash-head page-head between" style="flex-wrap:wrap">
+      <div>
+        <h1>Welcome, ${esc(name)} 👋</h1>
+        <p class="muted">Here's what's waiting for you in Astana.</p>
+      </div>
+      <button class="btn btn-soft btn-sm" data-action="go" data-view="profile">My profile</button>
+    </div>
 
-            <div class="field">
-              <label>Age</label>
-              <input
-                id="profileAge"
-                type="number"
-                value="20"
-                min="16"
-                max="70"
-              >
-            </div>
+    <div class="card">
+      <div class="between"><b>Your profile: ${comp}% complete</b><span class="muted small">${comp>=100?'All set 🎉':'Almost there'}</span></div>
+      <div class="progress"><i style="width:${comp}%"></i></div>
+      <p class="muted small">${comp<100?'Complete your lifestyle questionnaire to improve roommate recommendations.':'Your lifestyle profile is powering your matches.'}</p>
+    </div>
 
+    <div class="sec-title"><h2>Recommended apartments</h2><button data-action="go" data-view="housing">See all</button></div>
+    <div class="grid g3">${recApts.map(listingCard).join('')}</div>
 
-            <div class="field">
+    <div class="sec-title"><h2>Recommended roommates</h2><button data-action="go" data-view="roommates">See all</button></div>
+    <div class="grid g2">${recMates.map(roommateCard).join('')}</div>
 
-              <label>University</label>
+    <div class="sec-title"><h2>Upcoming events</h2><button data-action="go" data-view="events">See all</button></div>
+    <div class="grid g2">${evs.map(eventCard).join('')}</div>
 
-              <select id="profileUniversity">
+    <div class="sec-title"><h2>From the community</h2><button data-action="go" data-view="community">Open</button></div>
+    <div class="grid g2">${posts.map(postCard).join('')}</div>
 
-                <option>
-                  Astana IT University
-                </option>
+    <div class="sec-title"><h2>Local tips for Astana</h2><button data-action="go" data-view="guides">Full guide</button></div>
+    <div class="grid g3">
+      ${tips.map(t=>'<div class="card"><h3 style="font-size:15px;margin-bottom:6px">'+t.t+'</h3><p class="muted small">'+t.d+'</p></div>').join('')}
+    </div>
 
-                <option>
-                  Nazarbayev University
-                </option>
+    ${savedListings.length?`<div class="sec-title"><h2>Saved listings</h2></div><div class="grid g3">${savedListings.map(listingCard).join('')}</div>`:''}
 
-                <option>
-                  L.N. Gumilyov ENU
-                </option>
-
-                <option>
-                  Al-Farabi KazNU
-                </option>
-
-                <option>
-                  KBTU
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-              <label>City</label>
-
-              <input
-                id="profileCity"
-                value="Astana"
-              >
-            </div>
-
-
-            <div class="field">
-              <label>Country</label>
-
-              <input
-                id="profileCountry"
-                value="Kazakhstan"
-              >
-            </div>
-
-
-            <div class="field">
-              <label>Study Program</label>
-
-              <input
-                id="profileProgram"
-                value="IT Management"
-              >
-            </div>
-
-
-            <div class="field">
-
-              <label>Year of Study</label>
-
-              <select id="profileYear">
-                <option>1st year</option>
-                <option>2nd year</option>
-                <option selected>3rd year</option>
-                <option>4th year</option>
-                <option>Master's</option>
-                <option>Exchange semester</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Move-in Date</label>
-
-              <input
-                id="profileMoveIn"
-                type="date"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Length of Stay</label>
-
-              <select id="profileStay">
-                <option>1 semester</option>
-                <option selected>1 year</option>
-                <option>2 years</option>
-                <option>3+ years</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Monthly Housing Budget</label>
-
-              <select id="profileBudget">
-                <option>Under ₸100,000</option>
-                <option selected>₸100,000–150,000</option>
-                <option>₸150,000–200,000</option>
-                <option>₸200,000+</option>
-              </select>
-
-            </div>
-
+    <div class="sec-title"><h2>Messages</h2><button data-action="go" data-view="messages">Open inbox</button></div>
+    <div class="grid g2">
+      ${state.threads.slice(0,2).map(t=>`
+        <button class="thread-item" data-action="open-thread" data-id="${t.id}">
+          ${avatarHTML(t.name,t.color)}
+          <div style="flex:1;min-width:0">
+            <b style="font-size:14.5px">${esc(t.name)}</b>
+            <p class="muted small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.last)}</p>
           </div>
-
-        </div>
-
-
-        <div class="form-section">
-
-          <h3>
-            Lifestyle & Roommate Preferences
-          </h3>
-
-
-          <div class="form-grid">
-
-            <div class="field">
-
-              <label>Cleanliness</label>
-
-              <select id="prefCleanliness">
-                <option selected>
-                  Very important
-                </option>
-                <option>Important</option>
-                <option>Flexible</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Noise Level</label>
-
-              <select id="prefNoise">
-                <option>
-                  Complete silence
-                </option>
-                <option selected>
-                  Moderate noise is okay
-                </option>
-                <option>
-                  I don’t mind noise
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Sleep Schedule</label>
-
-              <select id="prefSleep">
-                <option>Early bird</option>
-                <option selected>
-                  Normal schedule
-                </option>
-                <option>Night owl</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Guests</label>
-
-              <select id="prefGuests">
-                <option>
-                  I rarely have guests
-                </option>
-                <option selected>
-                  Occasionally
-                </option>
-                <option>Frequently</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Smoking</label>
-
-              <select id="prefSmoking">
-                <option selected>
-                  Non-smoker
-                </option>
-                <option>
-                  Smoking is okay
-                </option>
-                <option>
-                  Smoking is not okay
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Shared Spaces</label>
-
-              <select id="prefShared">
-                <option selected>
-                  Very organized
-                </option>
-                <option>Balanced</option>
-                <option>Flexible</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Social Lifestyle</label>
-
-              <select id="prefSocial">
-                <option>
-                  Mostly quiet/private
-                </option>
-                <option selected>
-                  Balanced
-                </option>
-                <option>
-                  Very social
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Cooking</label>
-
-              <select id="prefCooking">
-                <option>
-                  Cook frequently
-                </option>
-                <option selected>
-                  Sometimes
-                </option>
-                <option>Rarely</option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Study Environment</label>
-
-              <select id="prefStudy">
-                <option selected>
-                  Quiet environment
-                </option>
-                <option>
-                  Background activity is okay
-                </option>
-                <option>
-                  Noise does not bother me
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Privacy</label>
-
-              <select id="prefPrivacy">
-                <option>
-                  Strongly prefer personal space
-                </option>
-                <option selected>
-                  Balanced
-                </option>
-                <option>
-                  Enjoy time with roommates
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Shared Groceries</label>
-
-              <select id="prefGroceries">
-                <option>
-                  Prefer separate groceries
-                </option>
-                <option selected>
-                  Some shared items are okay
-                </option>
-                <option>
-                  Happy to share groceries
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>Weekend Lifestyle</label>
-
-              <select id="prefWeekend">
-                <option>
-                  Mostly stay home
-                </option>
-                <option selected>
-                  Balanced
-                </option>
-                <option>
-                  Often go out
-                </option>
-              </select>
-
-            </div>
-
-
-            <div class="field full">
-
-              <label>
-                About Me
-              </label>
-
-              <textarea id="profileAbout">IT student interested in technology, travel and meeting students from different cultures.</textarea>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <button
-          class="btn btn-primary"
-          type="submit"
-        >
-          Generate Lifestyle Profile
-        </button>
-
-      </form>
-
+        </button>`).join('')}
     </div>
+    <div style="height:30px"></div>
+  </div>`;
+}
 
-  </section>
-
-
-  <!-- ======================================================
-       HOUSING
-       ====================================================== -->
-
-  <section
-    class="page"
-    id="page-housing"
-  >
-
-    <div class="container section">
-
-      <h1 class="section-title">
-        Verified Student Housing
-      </h1>
-
-      <p class="section-subtitle">
-        Discover student-friendly apartments
-        close to universities in Kazakhstan.
-      </p>
-
-
-      <div class="filter-bar">
-
-        <input
-          id="housingSearch"
-          placeholder="City, area or university"
-        >
-
-
-        <select id="housingPrice">
-
-          <option value="all">
-            Any price
-          </option>
-
-          <option value="100000">
-            Up to ₸100,000
-          </option>
-
-          <option value="150000">
-            Up to ₸150,000
-          </option>
-
-          <option value="200000">
-            Up to ₸200,000
-          </option>
-
-        </select>
-
-
-        <select id="housingDistance">
-
-          <option value="all">
-            Any distance
-          </option>
-
-          <option value="1">
-            Under 1 km
-          </option>
-
-          <option value="3">
-            Under 3 km
-          </option>
-
-          <option value="5">
-            Under 5 km
-          </option>
-
-        </select>
-
-
-        <select id="housingRoomType">
-
-          <option value="all">
-            Any room type
-          </option>
-
-          <option value="private">
-            Private room
-          </option>
-
-          <option value="shared">
-            Shared room
-          </option>
-
-          <option value="apartment">
-            Whole apartment
-          </option>
-
-        </select>
-
-
-        <label class="filter-check">
-
-          <input
-            type="checkbox"
-            id="verifiedOnly"
-          >
-
-          Verified only
-
-        </label>
-
-
-        <div class="view-toggle">
-
-          <button
-            class="btn btn-small btn-outline active"
-            id="listViewButton"
-          >
-            ☰ List
-          </button>
-
-          <button
-            class="btn btn-small btn-outline"
-            id="mapViewButton"
-          >
-            🗺 Map
-          </button>
-
-        </div>
-
+/* ---------- LISTING CARD ---------- */
+function listingCard(l){
+  const saved = state.saved.includes(l.id);
+  return `<div class="card listing">
+    <div class="listing-img" style="background:linear-gradient(140deg,${l.color},#FFFFFF)">
+      <span>${l.emoji}</span>
+      <div class="badges">
+        ${l.vApartment?'<span class="badge badge-green">🟢 Verified apartment</span>':''}
+        ${l.vLandlord?'<span class="badge badge-blue">🔵 Verified landlord</span>':''}
+        ${(!l.vApartment&&!l.vLandlord)?'<span class="badge badge-grey">Not verified</span>':''}
       </div>
-
-
-      <div
-        class="grid"
-        id="housingGrid"
-      ></div>
-
-
-      <div
-        class="housing-map"
-        id="housingMap"
-      >
-
-        <div class="map-road one"></div>
-        <div class="map-road two"></div>
-
-        <div
-          class="map-pin"
-          style="left:22%;top:27%"
-        >
-          <span>120k</span>
-        </div>
-
-        <div
-          class="map-pin"
-          style="left:61%;top:35%"
-        >
-          <span>135k</span>
-        </div>
-
-        <div
-          class="map-pin"
-          style="left:45%;top:68%"
-        >
-          <span>150k</span>
-        </div>
-
-        <div
-          class="map-pin"
-          style="left:76%;top:65%"
-        >
-          <span>95k</span>
-        </div>
-
-        <div style="
-          position:absolute;
-          left:20px;
-          top:20px;
-          padding:12px 15px;
-          border-radius:14px;
-          background:white;
-          box-shadow:var(--shadow-small);
-        ">
-          <strong>Astana</strong>
-          <div style="
-            font-size:12px;
-            color:var(--muted);
-          ">
-            Student housing around universities
-          </div>
-        </div>
-
-      </div>
-
+      <button class="save" data-action="save-listing" data-id="${l.id}" title="Save">${saved?'❤️':'🤍'}</button>
     </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       ROOMMATES
-       ====================================================== -->
-
-  <section
-    class="page"
-    id="page-roommates"
-  >
-
-    <div class="container section">
-
-      <h1 class="section-title">
-        Smart Roommate Matching
-      </h1>
-
-      <p class="section-subtitle">
-        Find students whose habits,
-        schedules and living preferences
-        are compatible with yours.
-      </p>
-
-
-      <div class="filter-bar">
-
-        <select id="roommateUniversity">
-
-          <option value="all">
-            All universities
-          </option>
-
-          <option value="aitu">
-            Astana IT University
-          </option>
-
-          <option value="nu">
-            Nazarbayev University
-          </option>
-
-          <option value="enu">
-            L.N. Gumilyov ENU
-          </option>
-
-        </select>
-
-
-        <select id="roommateSleep">
-
-          <option value="all">
-            Any sleep schedule
-          </option>
-
-          <option value="early">
-            Early bird
-          </option>
-
-          <option value="normal">
-            Normal schedule
-          </option>
-
-          <option value="night">
-            Night owl
-          </option>
-
-        </select>
-
-
-        <select id="roommateSmoking">
-
-          <option value="all">
-            Any smoking preference
-          </option>
-
-          <option value="non-smoker">
-            Non-smoker
-          </option>
-
-        </select>
-
-
-        <select id="roommateGender">
-
-          <option value="all">
-            Any gender
-          </option>
-
-          <option value="female">
-            Female
-          </option>
-
-          <option value="male">
-            Male
-          </option>
-
-        </select>
-
-
-        <select id="roommateBudget">
-
-          <option value="all">
-            Any budget
-          </option>
-
-          <option value="100">
-            Under ₸100k
-          </option>
-
-          <option value="150">
-            Up to ₸150k
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div
-        class="grid"
-        id="roommateGrid"
-      ></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       COMMUNITY
-       ====================================================== -->
-
-  <section
-    class="page"
-    id="page-community"
-  >
-
-    <div class="container section">
-
-      <div class="row-between">
-
-        <div>
-
-          <h1 class="section-title">
-            Student Community
-          </h1>
-
-          <p class="section-subtitle">
-            Ask questions, meet people
-            and become part of your new community.
-          </p>
-
-        </div>
-
-
-        <button
-          class="btn btn-primary"
-          id="createPostButton"
-        >
-          + Create Post
-        </button>
-
-      </div>
-
-
-      <div
-        class="category-row"
-        id="communityCategories"
-      ></div>
-
-
-      <div
-        class="grid-2"
-        id="communityGrid"
-      ></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       CITY GUIDES
-       ====================================================== -->
-
-  <section
-    class="page"
-    id="page-guides"
-  >
-
-    <div class="container section">
-
-      <h1 class="section-title">
-        Local Guides
-      </h1>
-
-      <p class="section-subtitle">
-        Everything a student needs
-        to understand life in a new city.
-      </p>
-
-
-      <div class="guide
+    <div class="listing-body">
+      <h3>${esc(l.title)}</h3>
+      <p class="muted small">📍 ${esc(l.area)}
