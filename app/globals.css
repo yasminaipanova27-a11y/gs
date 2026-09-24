@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --ink: #132b3a;
+  --muted: #687982;
+  --cream: #fbfaf7;
+  --paper: #ffffff;
+  --line: #e7eceb;
+  --coral: #ff735c;
+  --coral-soft: #fff0ec;
+  --mint: #dff4eb;
+  --teal: #217f78;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; }
+button, input { font: inherit; }
+::selection { background: #ffd6cc; color: var(--ink); }
+.font-display { font-family: 'Manrope', sans-serif; }
+.container { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+
+@keyframes float-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: float-in .7s ease-out both; }
+.delay-1 { animation-delay: .12s; }
+.delay-2 { animation-delay: .22s; }
+.delay-3 { animation-delay: .32s; }
+
+.hero-grid { background-image: linear-gradient(#e6eceb 1px, transparent 1px), linear-gradient(90deg, #e6eceb 1px, transparent 1px); background-size: 30px 30px; }
+.phone-grid { background-image: linear-gradient(#e2ece8 1px, transparent 1px), linear-gradient(90deg, #e2ece8 1px, transparent 1px); background-size: 22px 22px; }
+
+@media (max-width: 640px) { .container { width: min(100% - 28px, 1160px); } }
